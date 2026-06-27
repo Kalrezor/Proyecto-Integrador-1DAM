@@ -116,23 +116,15 @@ public class TablaGastos {
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                String categoria = rs.getString("categoria");
-                double total = rs.getDouble("total");
-                totalPorCategoria.put(categoria, total);
+                totalPorCategoria.put(rs.getString("categoria"), rs.getDouble("total"));
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (pstmt != null) {
-                    pstmt.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (con != null) con.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -140,4 +132,79 @@ public class TablaGastos {
 
         return totalPorCategoria;
     }
-} 
+
+    public double obtenerTotalGastosMes(int idUsuario, int mes, int año) {
+        double total = 0;
+        String query = "SELECT SUM(monto) AS total FROM Gasto " +
+                       "WHERE id_usuario = ? " +
+                       "AND strftime('%m', fecha) = ? " +
+                       "AND strftime('%Y', fecha) = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = conBBDD.getConexion();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, idUsuario);
+            pstmt.setString(2, String.format("%02d", mes));
+            pstmt.setString(3, String.valueOf(año));
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                total = rs.getDouble("total");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return total;
+    }
+
+    public Map<String, Double> obtenerTotalGastosPorCategoriaMes(int idUsuario, int mes, int año) {
+        Map<String, Double> totalPorCategoria = new HashMap<>();
+        String query = "SELECT categoria, SUM(monto) AS total FROM Gasto " +
+                       "WHERE id_usuario = ? " +
+                       "AND strftime('%m', fecha) = ? " +
+                       "AND strftime('%Y', fecha) = ? " +
+                       "GROUP BY categoria";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = conBBDD.getConexion();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, idUsuario);
+            pstmt.setString(2, String.format("%02d", mes));
+            pstmt.setString(3, String.valueOf(año));
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                totalPorCategoria.put(rs.getString("categoria"), rs.getDouble("total"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return totalPorCategoria;
+    }
+}

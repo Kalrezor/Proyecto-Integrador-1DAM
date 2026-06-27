@@ -80,15 +80,46 @@ public class TablaIngresos {
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (pstmt != null) {
-                    pstmt.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return total;
+    }
+
+    public double obtenerTotalIngresosMes(int idUsuario, int mes, int año) {
+        double total = 0;
+        String query = "SELECT SUM(monto) AS total FROM Ingreso " +
+                       "WHERE id_usuario = ? " +
+                       "AND strftime('%m', fecha) = ? " +
+                       "AND strftime('%Y', fecha) = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = conBBDD.getConexion();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, idUsuario);
+            pstmt.setString(2, String.format("%02d", mes));
+            pstmt.setString(3, String.valueOf(año));
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                total = rs.getDouble("total");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (con != null) con.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

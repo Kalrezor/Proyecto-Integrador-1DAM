@@ -17,6 +17,8 @@ public class EstadisticasView extends JPanel {
     private MainView mainView;
     private int idUsuarioActual;
     private DefaultTableModel objetivosTableModel;
+    private DefaultTableModel deudasTableModel;
+    private DefaultTableModel transferenciasTableModel;
     private JTable objetivosTable;
     private JLabel ingresosValueLabel;
     private JLabel gastosValueLabel;
@@ -144,15 +146,14 @@ public class EstadisticasView extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Transferencias"));
 
-        TablaTransferencia tablaTransferencia = new TablaTransferencia();
-        Object[][] transferenciasData = tablaTransferencia.obtenerTransferencias(idUsuarioActual);
-
         String[] transferenciasColumnNames = {"Remitente", "Destinatario", "Monto"};
-        DefaultTableModel transferenciasTableModel = new DefaultTableModel(transferenciasData, transferenciasColumnNames);
+        transferenciasTableModel = new DefaultTableModel(transferenciasColumnNames, 0);
         JTable transferenciasTable = new JTable(transferenciasTableModel);
 
         JScrollPane transferenciasScrollPane = new JScrollPane(transferenciasTable);
         panel.add(transferenciasScrollPane, BorderLayout.CENTER);
+
+        actualizarTablaTransferencias();
 
         return panel;
     }
@@ -161,28 +162,38 @@ public class EstadisticasView extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Deudas"));
 
+        String[] deudasColumnNames = {"Descripción", "Monto Total", "Monto Pendiente", "Fecha Vencimiento", "Estado"};
+        deudasTableModel = new DefaultTableModel(deudasColumnNames, 0);
+        JTable deudasTable = new JTable(deudasTableModel);
+        JScrollPane deudasScrollPane = new JScrollPane(deudasTable);
+        panel.add(deudasScrollPane, BorderLayout.CENTER);
+
+        actualizarTablaDeudas();
+
+        return panel;
+    }
+
+    public void actualizarTablaDeudas() {
+        deudasTableModel.setRowCount(0);
         TablaDeuda tablaDeuda = new TablaDeuda();
         List<Deuda> deudasList = tablaDeuda.obtenerDeudasPorUsuario(idUsuarioActual);
-
-        String[] deudasColumnNames = {"Descripción", "Monto Total", "Monto Pendiente", "Fecha Vencimiento", "Estado"};
-        DefaultTableModel deudasTableModel = new DefaultTableModel(deudasColumnNames, 0);
-
         for (Deuda deuda : deudasList) {
-            Object[] rowData = {
+            deudasTableModel.addRow(new Object[]{
                 deuda.getDescripcion(),
                 String.format("%.2f €", deuda.getMontoTotal()),
                 String.format("%.2f €", deuda.getMontoPendiente()),
                 deuda.getFechaVencimiento(),
                 deuda.getEstado()
-            };
-            deudasTableModel.addRow(rowData);
+            });
         }
+    }
 
-        JTable deudasTable = new JTable(deudasTableModel);
-        JScrollPane deudasScrollPane = new JScrollPane(deudasTable);
-        panel.add(deudasScrollPane, BorderLayout.CENTER);
-
-        return panel;
+    public void actualizarTablaTransferencias() {
+        transferenciasTableModel.setRowCount(0);
+        TablaTransferencia tablaTransferencia = new TablaTransferencia();
+        for (Object[] fila : tablaTransferencia.obtenerTransferencias(idUsuarioActual)) {
+            transferenciasTableModel.addRow(fila);
+        }
     }
 
     public JPanel createEstadisticasPanel() {

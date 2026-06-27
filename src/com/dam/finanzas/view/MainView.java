@@ -1,6 +1,7 @@
 package com.dam.finanzas.view;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +26,7 @@ public class MainView extends JFrame {
     private JLabel beneficioNetoValueLabel;
 
     private EstadisticasView estadisticasView;
+    private DefaultTableModel homeTransferenciasTableModel;
 	private JLabel lblOcio;
 	private JLabel lblRopa;
 	private JLabel lblTecno;
@@ -293,12 +295,9 @@ public class MainView extends JFrame {
         transferenciasLabel.setHorizontalAlignment(SwingConstants.CENTER);
         transaccionesPanel.add(transferenciasLabel);
 
-        TablaTransferencia tablaTransferencia = new TablaTransferencia();
-        Object[][] dataTransferencias = tablaTransferencia.obtenerTransferencias(idUsuarioActual);
-
         String[] columnNamesTransferencias = {"Remitente", "Destinatario", "Monto"};
-
-        JTable transferenciasTable = new JTable(dataTransferencias, columnNamesTransferencias);
+        homeTransferenciasTableModel = new DefaultTableModel(columnNamesTransferencias, 0);
+        JTable transferenciasTable = new JTable(homeTransferenciasTableModel);
         JScrollPane scrollPane = new JScrollPane(transferenciasTable);
         scrollPane.setBounds(11, 28, 498, 187);
         transaccionesPanel.add(scrollPane);
@@ -429,12 +428,15 @@ public class MainView extends JFrame {
     }
 
     public void actualizarTotales() {
+        int mes = LocalDate.now().getMonthValue();
+        int año = LocalDate.now().getYear();
+
         TablaIngresos tablaIngresos = new TablaIngresos();
-        double totalIngresos = tablaIngresos.obtenerTotalIngresos(idUsuarioActual);
+        double totalIngresos = tablaIngresos.obtenerTotalIngresosMes(idUsuarioActual, mes, año);
 
         TablaGastos tablaGastos = new TablaGastos();
-        double totalGastos = tablaGastos.obtenerTotalGastos(idUsuarioActual);
-        Map<String, Double> totalPorCategoria = tablaGastos.obtenerTotalGastosPorCategoria(idUsuarioActual);
+        double totalGastos = tablaGastos.obtenerTotalGastosMes(idUsuarioActual, mes, año);
+        Map<String, Double> totalPorCategoria = tablaGastos.obtenerTotalGastosPorCategoriaMes(idUsuarioActual, mes, año);
 
         double beneficioNeto = totalIngresos - totalGastos;
 
@@ -444,8 +446,15 @@ public class MainView extends JFrame {
 
         actualizarTotalesPorCategoria(totalPorCategoria);
 
+        homeTransferenciasTableModel.setRowCount(0);
+        for (Object[] fila : new TablaTransferencia().obtenerTransferencias(idUsuarioActual)) {
+            homeTransferenciasTableModel.addRow(fila);
+        }
+
         estadisticasView.actualizarTotales();
         estadisticasView.actualizarTablaObjetivos();
+        estadisticasView.actualizarTablaDeudas();
+        estadisticasView.actualizarTablaTransferencias();
     }
 
     private void actualizarTotalesPorCategoria(Map<String, Double> totalPorCategoria) {

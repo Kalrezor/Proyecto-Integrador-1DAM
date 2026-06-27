@@ -2,6 +2,7 @@ package com.dam.finanzas.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.Map;
 import com.dam.finanzas.model.bbdd.TablaIngresos;
 import com.dam.finanzas.model.bbdd.TablaGastos;
@@ -85,7 +86,7 @@ public class TransaccionesView extends JPanel {
                 String descripcion = descripcionField.getText();
 
                 if (cantidad > 0) {
-                    Ingreso ingreso = new Ingreso(idUsuarioActual, descripcion, cantidad, "CURRENT_DATE");
+                    Ingreso ingreso = new Ingreso(idUsuarioActual, descripcion, cantidad, LocalDate.now().toString());
                     TablaIngresos tablaIngresos = new TablaIngresos();
                     int resultado = tablaIngresos.registrarIngreso(ingreso);
 
@@ -179,7 +180,7 @@ public class TransaccionesView extends JPanel {
                         return;
                     }
 
-                    Gasto gasto = new Gasto(idUsuarioActual, descripcion, categoria, cantidad, "CURRENT_DATE");
+                    Gasto gasto = new Gasto(idUsuarioActual, descripcion, categoria, cantidad, LocalDate.now().toString());
                     TablaGastos tablaGastos = new TablaGastos();
                     int resultado = tablaGastos.registrarGasto(gasto);
 
