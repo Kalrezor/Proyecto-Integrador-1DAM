@@ -1,6 +1,7 @@
 package com.dam.finanzas.view;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import com.dam.finanzas.model.ObjetivoFinanciero;
 import com.dam.finanzas.model.bbdd.TablaObjetivoFinanciero;
@@ -36,6 +37,13 @@ public class ObjetivosView extends JPanel {
         String[] columnNames = {"Descripción", "Costo Total", "Ahorro Mensual Sugerido", "Tiempo Necesario", "Estado"};
         tableModel = new DefaultTableModel(columnNames, 0);
         table = new JTable(tableModel);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(false);
+        table.setRowHeight(22);
+        table.setFillsViewportHeight(true);
     }
 
     private void cargarObjetivos() {
@@ -52,7 +60,7 @@ public class ObjetivosView extends JPanel {
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        JPanel inputPanel = new JPanel(new GridLayout(6, 2, 10, 10));
+        JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
         inputPanel.setBackground(Color.LIGHT_GRAY);
         inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -180,8 +188,6 @@ public class ObjetivosView extends JPanel {
         addButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
         addButton.setBackground(new Color(44, 62, 80));
         addButton.setForeground(Color.WHITE);
-        inputPanel.add(addButton);
-
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -266,8 +272,6 @@ public class ObjetivosView extends JPanel {
             }
         });
 
-        JScrollPane scrollPane = new JScrollPane(table);
-
         JButton completeButton = new JButton("Marcar como Cumplido");
         completeButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
         completeButton.setBackground(new Color(44, 62, 80));
@@ -292,12 +296,18 @@ public class ObjetivosView extends JPanel {
             }
         });
 
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.add(completeButton, BorderLayout.NORTH);
-        bottomPanel.add(scrollPane, BorderLayout.CENTER);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 8));
+        buttonPanel.setBackground(Color.LIGHT_GRAY);
+        buttonPanel.add(addButton);
+        buttonPanel.add(completeButton);
 
-        panel.add(inputPanel, BorderLayout.NORTH);
-        panel.add(bottomPanel, BorderLayout.CENTER);
+        JPanel northWrapper = new JPanel(new BorderLayout());
+        northWrapper.setBackground(Color.LIGHT_GRAY);
+        northWrapper.add(inputPanel, BorderLayout.CENTER);
+        northWrapper.add(buttonPanel, BorderLayout.SOUTH);
+
+        panel.add(northWrapper, BorderLayout.NORTH);
+        panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
         return panel;
     }
@@ -314,5 +324,6 @@ public class ObjetivosView extends JPanel {
             };
             tableModel.addRow(rowData);
         }
+        UIUtils.ajustarTabla(table);
     }
 }

@@ -58,7 +58,7 @@ public class PerfilView extends JPanel {
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
 
         JLabel avatarLabel = new JLabel("👤");
-        avatarLabel.setFont(new Font("Arial", Font.PLAIN, 48));
+        avatarLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
         avatarLabel.setHorizontalAlignment(SwingConstants.CENTER);
         avatarLabel.setPreferredSize(new Dimension(65, 65));
         card.add(avatarLabel, BorderLayout.WEST);

@@ -1,6 +1,7 @@
 package com.dam.finanzas.view;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -35,10 +36,13 @@ public class MainView extends JFrame {
 
     private EstadisticasView estadisticasView;
     private DefaultTableModel homeTransferenciasTableModel;
+    private JTable homeTransferenciasTable;
     private JLabel homeWelcomeLabel;
     private JLabel homeUserNameLabel;
     private DefaultTableModel homeDeudasTableModel;
+    private JTable homeDeudasTable;
     private DefaultTableModel homeObjetivosTableModel;
+    private JTable homeObjetivosTable;
 	private JLabel lblOcio;
 	private JLabel lblRopa;
 	private JLabel lblTecno;
@@ -254,7 +258,7 @@ public class MainView extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.LIGHT_GRAY);
 
-        homeWelcomeLabel = new JLabel("¡Bienvenid@ " + SesionUsuario.getInstancia().getNombreUsuario() + "!");
+        homeWelcomeLabel = new JLabel("¡Hola, " + SesionUsuario.getInstancia().getNombreUsuario() + "!");
         homeWelcomeLabel.setFont(new Font("Arial", Font.BOLD, 18));
         homeWelcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(homeWelcomeLabel, BorderLayout.NORTH);
@@ -314,26 +318,32 @@ public class MainView extends JFrame {
 
         datosFinancierosPanel.add(finanzasPanel, BorderLayout.CENTER);
 
-        JPanel transaccionesPanel = new JPanel(new BorderLayout(0, 6));
-        transaccionesPanel.setBackground(new Color(192, 192, 192));
-        transaccionesPanel.setBorder(BorderFactory.createCompoundBorder(
+        // 3 tablas apiladas verticalmente
+        JPanel tablesPanel = new JPanel(new GridLayout(3, 1, 0, 5));
+        tablesPanel.setBackground(new Color(192, 192, 192));
+        tablesPanel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.GRAY),
-            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            BorderFactory.createEmptyBorder(8, 8, 8, 8)
         ));
 
-        // Transferencias recientes (arriba)
+        // Transferencias recientes
         JPanel transferenciasSubPanel = new JPanel(new BorderLayout());
         transferenciasSubPanel.setBackground(new Color(192, 192, 192));
         transferenciasSubPanel.setBorder(BorderFactory.createTitledBorder("Transferencias recientes"));
         String[] columnNamesTransferencias = {"Remitente", "Destinatario", "Monto"};
         homeTransferenciasTableModel = new DefaultTableModel(columnNamesTransferencias, 0);
-        JTable transferenciasTable = new JTable(homeTransferenciasTableModel);
-        JScrollPane scrollPane = new JScrollPane(transferenciasTable);
-        scrollPane.setPreferredSize(new Dimension(0, 120));
-        transferenciasSubPanel.add(scrollPane, BorderLayout.CENTER);
-        transaccionesPanel.add(transferenciasSubPanel, BorderLayout.NORTH);
+        homeTransferenciasTable = new JTable(homeTransferenciasTableModel);
+        DefaultTableCellRenderer centerRend = new DefaultTableCellRenderer();
+        centerRend.setHorizontalAlignment(SwingConstants.CENTER);
+        homeTransferenciasTable.setDefaultRenderer(Object.class, centerRend);
+        homeTransferenciasTable.getTableHeader().setReorderingAllowed(false);
+        homeTransferenciasTable.getTableHeader().setResizingAllowed(false);
+        homeTransferenciasTable.setRowHeight(22);
+        homeTransferenciasTable.setFillsViewportHeight(true);
+        transferenciasSubPanel.add(new JScrollPane(homeTransferenciasTable), BorderLayout.CENTER);
+        tablesPanel.add(transferenciasSubPanel);
 
-        // Deudas próximas a vencer (abajo izquierda)
+        // Deudas próximas a vencer
         JPanel deudasHomePanel = new JPanel(new BorderLayout());
         deudasHomePanel.setBackground(new Color(192, 192, 192));
         deudasHomePanel.setBorder(BorderFactory.createTitledBorder("Deudas próximas a vencer"));
@@ -341,7 +351,7 @@ public class MainView extends JFrame {
         homeDeudasTableModel = new DefaultTableModel(deudasCols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
-        JTable deudasHomeTable = new JTable(homeDeudasTableModel) {
+        homeDeudasTable = new JTable(homeDeudasTableModel) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component c = super.prepareRenderer(renderer, row, column);
@@ -364,9 +374,17 @@ public class MainView extends JFrame {
                 return c;
             }
         };
-        deudasHomePanel.add(new JScrollPane(deudasHomeTable), BorderLayout.CENTER);
+        DefaultTableCellRenderer centerRendD = new DefaultTableCellRenderer();
+        centerRendD.setHorizontalAlignment(SwingConstants.CENTER);
+        homeDeudasTable.setDefaultRenderer(Object.class, centerRendD);
+        homeDeudasTable.getTableHeader().setReorderingAllowed(false);
+        homeDeudasTable.getTableHeader().setResizingAllowed(false);
+        homeDeudasTable.setRowHeight(22);
+        homeDeudasTable.setFillsViewportHeight(true);
+        deudasHomePanel.add(new JScrollPane(homeDeudasTable), BorderLayout.CENTER);
+        tablesPanel.add(deudasHomePanel);
 
-        // Objetivos activos (abajo derecha)
+        // Objetivos activos
         JPanel objetivosHomePanel = new JPanel(new BorderLayout());
         objetivosHomePanel.setBackground(new Color(192, 192, 192));
         objetivosHomePanel.setBorder(BorderFactory.createTitledBorder("Objetivos activos"));
@@ -374,123 +392,81 @@ public class MainView extends JFrame {
         homeObjetivosTableModel = new DefaultTableModel(objetivosCols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
-        JTable objetivosHomeTable = new JTable(homeObjetivosTableModel);
-        objetivosHomePanel.add(new JScrollPane(objetivosHomeTable), BorderLayout.CENTER);
+        homeObjetivosTable = new JTable(homeObjetivosTableModel);
+        DefaultTableCellRenderer centerRendO = new DefaultTableCellRenderer();
+        centerRendO.setHorizontalAlignment(SwingConstants.CENTER);
+        homeObjetivosTable.setDefaultRenderer(Object.class, centerRendO);
+        homeObjetivosTable.getTableHeader().setReorderingAllowed(false);
+        homeObjetivosTable.getTableHeader().setResizingAllowed(false);
+        homeObjetivosTable.setRowHeight(22);
+        homeObjetivosTable.setFillsViewportHeight(true);
+        objetivosHomePanel.add(new JScrollPane(homeObjetivosTable), BorderLayout.CENTER);
+        tablesPanel.add(objetivosHomePanel);
 
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 8, 0));
-        bottomPanel.setBackground(new Color(192, 192, 192));
-        bottomPanel.add(deudasHomePanel);
-        bottomPanel.add(objetivosHomePanel);
-        transaccionesPanel.add(bottomPanel, BorderLayout.CENTER);
-
-        JPanel rightPanel = new JPanel(new BorderLayout());
+        // Panel derecho - Gastos por categoría (grid 2 columnas, compacto)
+        JPanel rightPanel = new JPanel(new BorderLayout(0, 4));
         rightPanel.setBackground(Color.LIGHT_GRAY);
+        rightPanel.setPreferredSize(new Dimension(170, 0));
+        rightPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 4));
 
-        JPanel rightHeader = new JPanel(new BorderLayout());
+        JPanel rightHeader = new JPanel(new BorderLayout(6, 0));
         rightHeader.setBackground(Color.LIGHT_GRAY);
         JLabel userIcon = new JLabel("👤");
-        userIcon.setFont(new Font("Arial", Font.BOLD, 24));
+        userIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
         homeUserNameLabel = new JLabel(SesionUsuario.getInstancia().getNombreUsuario());
-        homeUserNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        homeUserNameLabel.setFont(new Font("Arial", Font.BOLD, 13));
         rightHeader.add(userIcon, BorderLayout.WEST);
         rightHeader.add(homeUserNameLabel, BorderLayout.CENTER);
         rightPanel.add(rightHeader, BorderLayout.NORTH);
 
-        JPanel gastosListPanel = new JPanel(new GridLayout(0, 1, 0, 1));
-        gastosListPanel.setBackground(Color.LIGHT_GRAY);
+        JPanel gastosContainer = new JPanel();
+        gastosContainer.setLayout(new BoxLayout(gastosContainer, BoxLayout.Y_AXIS));
+        gastosContainer.setBackground(Color.LIGHT_GRAY);
 
-        JLabel tiposGastosLabel = new JLabel("Tipos de Gastos:");
-        tiposGastosLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        tiposGastosLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        gastosListPanel.add(tiposGastosLabel);
+        JLabel tiposGastosLabel = new JLabel("Tipos de Gastos");
+        tiposGastosLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        tiposGastosLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        gastosContainer.add(tiposGastosLabel);
+        gastosContainer.add(Box.createVerticalStrut(6));
 
-        JLabel ocioLabel = new JLabel("Ocio y entretenimiento  ");
-        ocioLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        ocioLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        gastosListPanel.add(ocioLabel);
+        Font catFont = new Font("Arial", Font.BOLD, 12);
+        JPanel gastosGrid = new JPanel(new GridLayout(8, 2, 4, 12));
+        gastosGrid.setBackground(Color.LIGHT_GRAY);
+        gastosGrid.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        lblOcio = new JLabel("0 €");
-        lblOcio.setFont(new Font("Arial", Font.BOLD, 14));
-        lblOcio.setHorizontalAlignment(SwingConstants.CENTER);
-        gastosListPanel.add(lblOcio);
+        JLabel l1 = new JLabel("Ocio"); l1.setFont(catFont);
+        lblOcio = new JLabel("0,00 €"); lblOcio.setFont(catFont); lblOcio.setHorizontalAlignment(SwingConstants.RIGHT);
+        gastosGrid.add(l1); gastosGrid.add(lblOcio);
+        JLabel l2 = new JLabel("Ropa"); l2.setFont(catFont);
+        lblRopa = new JLabel("0,00 €"); lblRopa.setFont(catFont); lblRopa.setHorizontalAlignment(SwingConstants.RIGHT);
+        gastosGrid.add(l2); gastosGrid.add(lblRopa);
+        JLabel l3 = new JLabel("Tecnología"); l3.setFont(catFont);
+        lblTecno = new JLabel("0,00 €"); lblTecno.setFont(catFont); lblTecno.setHorizontalAlignment(SwingConstants.RIGHT);
+        gastosGrid.add(l3); gastosGrid.add(lblTecno);
+        JLabel l4 = new JLabel("Salud"); l4.setFont(catFont);
+        lblSalud = new JLabel("0,00 €"); lblSalud.setFont(catFont); lblSalud.setHorizontalAlignment(SwingConstants.RIGHT);
+        gastosGrid.add(l4); gastosGrid.add(lblSalud);
+        JLabel l5 = new JLabel("Transporte"); l5.setFont(catFont);
+        lblTransporte = new JLabel("0,00 €"); lblTransporte.setFont(catFont); lblTransporte.setHorizontalAlignment(SwingConstants.RIGHT);
+        gastosGrid.add(l5); gastosGrid.add(lblTransporte);
+        JLabel l6 = new JLabel("Comida"); l6.setFont(catFont);
+        lblComida = new JLabel("0,00 €"); lblComida.setFont(catFont); lblComida.setHorizontalAlignment(SwingConstants.RIGHT);
+        gastosGrid.add(l6); gastosGrid.add(lblComida);
+        JLabel l7 = new JLabel("Hogar"); l7.setFont(catFont);
+        lblHogar = new JLabel("0,00 €"); lblHogar.setFont(catFont); lblHogar.setHorizontalAlignment(SwingConstants.RIGHT);
+        gastosGrid.add(l7); gastosGrid.add(lblHogar);
+        JLabel l8 = new JLabel("Educación"); l8.setFont(catFont);
+        lblEduca = new JLabel("0,00 €"); lblEduca.setFont(catFont); lblEduca.setHorizontalAlignment(SwingConstants.RIGHT);
+        gastosGrid.add(l8); gastosGrid.add(lblEduca);
 
-        JLabel ropaLabel = new JLabel("Ropa y accesorios  ");
-        ropaLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        ropaLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        gastosListPanel.add(ropaLabel);
-
-        lblRopa = new JLabel("0 €");
-        lblRopa.setFont(new Font("Arial", Font.BOLD, 14));
-        lblRopa.setHorizontalAlignment(SwingConstants.CENTER);
-        gastosListPanel.add(lblRopa);
-
-        JLabel tecnoLabel = new JLabel("Tecnología y gadgets  ");
-        tecnoLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        tecnoLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        gastosListPanel.add(tecnoLabel);
-
-        lblTecno = new JLabel("0 €");
-        lblTecno.setFont(new Font("Arial", Font.BOLD, 14));
-        lblTecno.setHorizontalAlignment(SwingConstants.CENTER);
-        gastosListPanel.add(lblTecno);
-
-        JLabel saludLabel = new JLabel("Salud y cuidado personal  ");
-        saludLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        saludLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        gastosListPanel.add(saludLabel);
-
-        lblSalud = new JLabel("0 €");
-        lblSalud.setFont(new Font("Arial", Font.BOLD, 14));
-        lblSalud.setHorizontalAlignment(SwingConstants.CENTER);
-        gastosListPanel.add(lblSalud);
-
-        JLabel transpLabel = new JLabel("Transporte y movilidad  ");
-        transpLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        transpLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        gastosListPanel.add(transpLabel);
-
-        lblTransporte = new JLabel("0 €");
-        lblTransporte.setFont(new Font("Arial", Font.BOLD, 14));
-        lblTransporte.setHorizontalAlignment(SwingConstants.CENTER);
-        gastosListPanel.add(lblTransporte);
-
-        JLabel comidaLabel = new JLabel("Comida y supermercado  ");
-        comidaLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        comidaLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        gastosListPanel.add(comidaLabel);
-
-        lblComida = new JLabel("0 €");
-        lblComida.setFont(new Font("Arial", Font.BOLD, 14));
-        lblComida.setHorizontalAlignment(SwingConstants.CENTER);
-        gastosListPanel.add(lblComida);
-
-        JLabel hogarLabel = new JLabel("Hogar y decoración  ");
-        hogarLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        hogarLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        gastosListPanel.add(hogarLabel);
-
-        lblHogar = new JLabel("0 €");
-        lblHogar.setFont(new Font("Arial", Font.BOLD, 14));
-        lblHogar.setHorizontalAlignment(SwingConstants.CENTER);
-        gastosListPanel.add(lblHogar);
-
-        JLabel educLabel = new JLabel("Educación y formación  ");
-        educLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        educLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        gastosListPanel.add(educLabel);
-
-        lblEduca = new JLabel("0 €");
-        lblEduca.setFont(new Font("Arial", Font.BOLD, 14));
-        lblEduca.setHorizontalAlignment(SwingConstants.CENTER);
-        gastosListPanel.add(lblEduca);
-
-        rightPanel.add(gastosListPanel, BorderLayout.CENTER);
+        gastosContainer.add(gastosGrid);
+        rightPanel.add(gastosContainer, BorderLayout.CENTER);
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setBackground(Color.LIGHT_GRAY);
 
         centerPanel.add(datosFinancierosPanel, BorderLayout.NORTH);
-        centerPanel.add(transaccionesPanel, BorderLayout.CENTER);
+        centerPanel.add(tablesPanel, BorderLayout.CENTER);
 
         panel.add(centerPanel, BorderLayout.CENTER);
         panel.add(rightPanel, BorderLayout.EAST);
@@ -521,6 +497,7 @@ public class MainView extends JFrame {
         for (Object[] fila : new TablaTransferencia().obtenerTransferencias(idUsuarioActual)) {
             homeTransferenciasTableModel.addRow(fila);
         }
+        UIUtils.ajustarTabla(homeTransferenciasTable);
 
         actualizarPanelInferior();
 
@@ -547,6 +524,7 @@ public class MainView extends JFrame {
                     diasStr
                 });
             });
+        UIUtils.ajustarTabla(homeDeudasTable);
 
         homeObjetivosTableModel.setRowCount(0);
         List<ObjetivoFinanciero> objetivos = new TablaObjetivoFinanciero().obtenerObjetivosPorUsuario(idUsuarioActual);
@@ -558,6 +536,7 @@ public class MainView extends JFrame {
                 String.format("%.2f €/mes", o.getAhorroMensualSugerido()),
                 o.getTiempoNecesario()
             }));
+        UIUtils.ajustarTabla(homeObjetivosTable);
     }
 
     private long diasHastaVencimiento(String fechaStr) {
@@ -590,7 +569,7 @@ public class MainView extends JFrame {
     }
 
     public void actualizarNombreEnHome(String nuevoNombre) {
-        homeWelcomeLabel.setText("¡Bienvenid@ " + nuevoNombre + "!");
+        homeWelcomeLabel.setText("¡Hola, " + nuevoNombre + "!");
         homeUserNameLabel.setText(nuevoNombre);
     }
 

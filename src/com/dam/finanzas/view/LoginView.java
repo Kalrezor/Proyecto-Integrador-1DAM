@@ -33,7 +33,7 @@ public class LoginView extends JFrame {
 
         JLabel lblIconoUsuario = new JLabel("👤");
         lblIconoUsuario.setHorizontalAlignment(SwingConstants.CENTER);
-        lblIconoUsuario.setFont(new Font("Arial", Font.BOLD, 48));
+        lblIconoUsuario.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
         lblIconoUsuario.setForeground(Color.WHITE);
         GridBagConstraints gbcIconoUsuario = new GridBagConstraints();
         gbcIconoUsuario.gridx = 0;

@@ -1,6 +1,7 @@
 package com.dam.finanzas.view;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -39,6 +40,13 @@ public class DeudasView extends JPanel {
         String[] columnNames = {"Descripción", "Monto Total", "Monto Pendiente", "Fecha Vencimiento", "Estado"};
         tableModel = new DefaultTableModel(columnNames, 0);
         table = new JTable(tableModel);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(false);
+        table.setRowHeight(22);
+        table.setFillsViewportHeight(true);
     }
 
     private void cargarDeudasUsuario() {
@@ -56,7 +64,7 @@ public class DeudasView extends JPanel {
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        JPanel inputPanel = new JPanel(new GridLayout(6, 2, 10, 10));
+        JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
         inputPanel.setBackground(Color.LIGHT_GRAY);
         inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -186,7 +194,6 @@ public class DeudasView extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
-        table.getTableHeader().setReorderingAllowed(false);
 
         return panel;
     }
@@ -338,5 +345,6 @@ public class DeudasView extends JPanel {
             };
             tableModel.addRow(rowData);
         }
+        UIUtils.ajustarTabla(table);
     }
 }

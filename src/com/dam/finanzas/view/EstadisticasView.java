@@ -1,6 +1,7 @@
 package com.dam.finanzas.view;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import com.dam.finanzas.model.Deuda;
 import com.dam.finanzas.model.ObjetivoFinanciero;
@@ -20,6 +21,8 @@ public class EstadisticasView extends JPanel {
     private DefaultTableModel deudasTableModel;
     private DefaultTableModel transferenciasTableModel;
     private JTable objetivosTable;
+    private JTable deudasTable;
+    private JTable transferenciasTable;
     private JLabel ingresosValueLabel;
     private JLabel gastosValueLabel;
 
@@ -81,6 +84,7 @@ public class EstadisticasView extends JPanel {
             };
             objetivosTableModel.addRow(rowData);
         }
+        UIUtils.ajustarTabla(objetivosTable);
     }
 
     public void actualizarTotales() {
@@ -101,6 +105,13 @@ public class EstadisticasView extends JPanel {
         String[] objetivosColumnNames = {"Descripción", "Costo Total", "Ahorro Mensual Sugerido", "Tiempo Necesario", "Estado"};
         objetivosTableModel = new DefaultTableModel(objetivosColumnNames, 0);
         objetivosTable = new JTable(objetivosTableModel);
+        DefaultTableCellRenderer centerRendObj = new DefaultTableCellRenderer();
+        centerRendObj.setHorizontalAlignment(SwingConstants.CENTER);
+        objetivosTable.setDefaultRenderer(Object.class, centerRendObj);
+        objetivosTable.getTableHeader().setReorderingAllowed(false);
+        objetivosTable.getTableHeader().setResizingAllowed(false);
+        objetivosTable.setRowHeight(22);
+        objetivosTable.setFillsViewportHeight(true);
 
         JScrollPane objetivosScrollPane = new JScrollPane(objetivosTable);
         panel.add(objetivosScrollPane, BorderLayout.CENTER);
@@ -148,7 +159,14 @@ public class EstadisticasView extends JPanel {
 
         String[] transferenciasColumnNames = {"Remitente", "Destinatario", "Monto"};
         transferenciasTableModel = new DefaultTableModel(transferenciasColumnNames, 0);
-        JTable transferenciasTable = new JTable(transferenciasTableModel);
+        transferenciasTable = new JTable(transferenciasTableModel);
+        DefaultTableCellRenderer centerRendTr = new DefaultTableCellRenderer();
+        centerRendTr.setHorizontalAlignment(SwingConstants.CENTER);
+        transferenciasTable.setDefaultRenderer(Object.class, centerRendTr);
+        transferenciasTable.getTableHeader().setReorderingAllowed(false);
+        transferenciasTable.getTableHeader().setResizingAllowed(false);
+        transferenciasTable.setRowHeight(22);
+        transferenciasTable.setFillsViewportHeight(true);
 
         JScrollPane transferenciasScrollPane = new JScrollPane(transferenciasTable);
         panel.add(transferenciasScrollPane, BorderLayout.CENTER);
@@ -164,7 +182,14 @@ public class EstadisticasView extends JPanel {
 
         String[] deudasColumnNames = {"Descripción", "Monto Total", "Monto Pendiente", "Fecha Vencimiento", "Estado"};
         deudasTableModel = new DefaultTableModel(deudasColumnNames, 0);
-        JTable deudasTable = new JTable(deudasTableModel);
+        deudasTable = new JTable(deudasTableModel);
+        DefaultTableCellRenderer centerRendDeu = new DefaultTableCellRenderer();
+        centerRendDeu.setHorizontalAlignment(SwingConstants.CENTER);
+        deudasTable.setDefaultRenderer(Object.class, centerRendDeu);
+        deudasTable.getTableHeader().setReorderingAllowed(false);
+        deudasTable.getTableHeader().setResizingAllowed(false);
+        deudasTable.setRowHeight(22);
+        deudasTable.setFillsViewportHeight(true);
         JScrollPane deudasScrollPane = new JScrollPane(deudasTable);
         panel.add(deudasScrollPane, BorderLayout.CENTER);
 
@@ -186,6 +211,7 @@ public class EstadisticasView extends JPanel {
                 deuda.getEstado()
             });
         }
+        UIUtils.ajustarTabla(deudasTable);
     }
 
     public void actualizarTablaTransferencias() {
@@ -194,6 +220,7 @@ public class EstadisticasView extends JPanel {
         for (Object[] fila : tablaTransferencia.obtenerTransferencias(idUsuarioActual)) {
             transferenciasTableModel.addRow(fila);
         }
+        UIUtils.ajustarTabla(transferenciasTable);
     }
 
     public JPanel createEstadisticasPanel() {
