@@ -83,6 +83,8 @@ public class MainView extends JFrame {
         estadisticasView = new EstadisticasView(idUsuarioActual, this);
         contentPanel.add(estadisticasView.createEstadisticasPanel(), "ESTADISTICAS");
 
+        contentPanel.add(new GuiaView(), "GUIA");
+
         getContentPane().add(contentPanel, BorderLayout.CENTER);
 
         actualizarTotales();
@@ -196,6 +198,24 @@ public class MainView extends JFrame {
             }
         });
 
+        JButton btnGuia = new JButton("Guía");
+        configureButton(btnGuia);
+        GridBagConstraints gbcGuia = new GridBagConstraints();
+        gbcGuia.fill = GridBagConstraints.BOTH;
+        gbcGuia.anchor = GridBagConstraints.NORTH;
+        gbcGuia.weightx = 1.0;
+        gbcGuia.weighty = 1.0;
+        gbcGuia.gridy = 6;
+        gbcGuia.insets = new Insets(5, 10, 5, 10);
+        sidebar.add(btnGuia, gbcGuia);
+
+        btnGuia.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "GUIA");
+            }
+        });
+
         JButton btnSalir = new JButton("Salir");
         configureButton(btnSalir);
         GridBagConstraints gbcSalir = new GridBagConstraints();
@@ -203,7 +223,7 @@ public class MainView extends JFrame {
         gbcSalir.anchor = GridBagConstraints.NORTH;
         gbcSalir.weightx = 1.0;
         gbcSalir.weighty = 1.0;
-        gbcSalir.gridy = 6;
+        gbcSalir.gridy = 7;
         gbcSalir.insets = new Insets(5, 10, 5, 10);
         sidebar.add(btnSalir, gbcSalir);
 
