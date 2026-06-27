@@ -262,45 +262,42 @@ public class TransaccionesView extends JPanel {
         gbcButton.insets = new Insets(25, 15, 15, 15);
         JButton registrarButton = new JButton("Registrar");
         registrarButton.addActionListener(e -> {
-            String nombreDestinatarioRemitente = destinatarioField.getText();
+            String nombreOtroUsuario = destinatarioField.getText().trim();
             String asunto = asuntoField.getText();
             try {
                 double cantidad = Double.parseDouble(cantidadField.getText());
 
                 if (cantidad > 0) {
-                    String nombreUsuarioActual = obtenerNombreUsuario(idUsuarioActual);
+                    TablaTransferencia tablaTransferencia = new TablaTransferencia();
+                    int idOtroUsuario = tablaTransferencia.obtenerIdPorNombre(nombreOtroUsuario);
+
+                    if (idOtroUsuario == -1) {
+                        JOptionPane.showMessageDialog(null, "Usuario '" + nombreOtroUsuario + "' no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
                     String opcion = (String) tipoTransferenciaComboBox.getSelectedItem();
+                    Transferencia transferencia;
+                    String mensaje;
 
                     if ("Enviar Dinero".equals(opcion)) {
-                        Transferencia transferencia = new Transferencia(nombreUsuarioActual, nombreDestinatarioRemitente, cantidad, asunto);
-                        TablaTransferencia tablaTransferencia = new TablaTransferencia();
-                        int resultado = tablaTransferencia.registrarTransferencia(transferencia);
+                        transferencia = new Transferencia(idUsuarioActual, idOtroUsuario, cantidad, asunto);
+                        mensaje = "Dinero enviado: " + cantidad + "€ a " + nombreOtroUsuario + " por " + asunto;
+                    } else {
+                        transferencia = new Transferencia(idOtroUsuario, idUsuarioActual, cantidad, asunto);
+                        mensaje = "Dinero recibido: " + cantidad + "€ de " + nombreOtroUsuario + " por " + asunto;
+                    }
 
-                        if (resultado > 0) {
-                            String mensaje = "Dinero enviado: " + cantidad + "€ a " + nombreDestinatarioRemitente + " por " + asunto;
-                            JOptionPane.showMessageDialog(null, mensaje, "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                            destinatarioField.setText("");
-                            asuntoField.setText("");
-                            cantidadField.setText("");
-                            mainView.actualizarTotales();
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Error al registrar la transferencia", "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    } else if ("Recibir Dinero".equals(opcion)) {
-                        Transferencia transferencia = new Transferencia(nombreDestinatarioRemitente, nombreUsuarioActual, cantidad, asunto);
-                        TablaTransferencia tablaTransferencia = new TablaTransferencia();
-                        int resultado = tablaTransferencia.registrarTransferencia(transferencia);
+                    int resultado = tablaTransferencia.registrarTransferencia(transferencia);
 
-                        if (resultado > 0) {
-                            String mensaje = "Dinero recibido: " + cantidad + "€ de " + nombreDestinatarioRemitente + " por " + asunto;
-                            JOptionPane.showMessageDialog(null, mensaje, "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                            destinatarioField.setText("");
-                            asuntoField.setText("");
-                            cantidadField.setText("");
-                            mainView.actualizarTotales();
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Error al registrar la transferencia", "Error", JOptionPane.ERROR_MESSAGE);
-                        }
+                    if (resultado > 0) {
+                        JOptionPane.showMessageDialog(null, mensaje, "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        destinatarioField.setText("");
+                        asuntoField.setText("");
+                        cantidadField.setText("");
+                        mainView.actualizarTotales();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error al registrar la transferencia", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "La cantidad debe ser mayor que 0", "Error", JOptionPane.ERROR_MESSAGE);
@@ -312,9 +309,5 @@ public class TransaccionesView extends JPanel {
         panel.add(registrarButton, gbcButton);
 
         return panel;
-    }
-
-    private String obtenerNombreUsuario(int idUsuario) {
-        return "Nombre del Usuario";
     }
 }

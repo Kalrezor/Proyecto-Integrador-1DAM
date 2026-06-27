@@ -1,32 +1,32 @@
 package com.dam.finanzas.model;
 
 public class Transferencia {
-    private String remitente;
-    private String destinatario;
+    private int idRemitente;
+    private int idDestinatario;
     private double monto;
     private String descripcion;
 
-    public Transferencia(String remitente, String destinatario, double monto, String descripcion) {
-        this.remitente = remitente;
-        this.destinatario = destinatario;
+    public Transferencia(int idRemitente, int idDestinatario, double monto, String descripcion) {
+        this.idRemitente = idRemitente;
+        this.idDestinatario = idDestinatario;
         this.monto = monto;
         this.descripcion = descripcion;
     }
 
-    public String getRemitente() {
-        return remitente;
+    public int getIdRemitente() {
+        return idRemitente;
     }
 
-    public void setRemitente(String remitente) {
-        this.remitente = remitente;
+    public void setIdRemitente(int idRemitente) {
+        this.idRemitente = idRemitente;
     }
 
-    public String getDestinatario() {
-        return destinatario;
+    public int getIdDestinatario() {
+        return idDestinatario;
     }
 
-    public void setDestinatario(String destinatario) {
-        this.destinatario = destinatario;
+    public void setIdDestinatario(int idDestinatario) {
+        this.idDestinatario = idDestinatario;
     }
 
     public double getMonto() {
