@@ -7,11 +7,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.swing.table.TableCellRenderer;
+import com.dam.finanzas.model.Deuda;
+import com.dam.finanzas.model.ObjetivoFinanciero;
 import com.dam.finanzas.model.SesionUsuario;
+import com.dam.finanzas.model.bbdd.TablaDeuda;
 import com.dam.finanzas.model.bbdd.TablaIngresos;
 import com.dam.finanzas.model.bbdd.TablaGastos;
+import com.dam.finanzas.model.bbdd.TablaObjetivoFinanciero;
 import com.dam.finanzas.model.bbdd.TablaTransferencia;
 
 public class MainView extends JFrame {
@@ -27,6 +35,8 @@ public class MainView extends JFrame {
 
     private EstadisticasView estadisticasView;
     private DefaultTableModel homeTransferenciasTableModel;
+    private DefaultTableModel homeDeudasTableModel;
+    private DefaultTableModel homeObjetivosTableModel;
 	private JLabel lblOcio;
 	private JLabel lblRopa;
 	private JLabel lblTecno;
@@ -281,26 +291,74 @@ public class MainView extends JFrame {
 
         datosFinancierosPanel.add(finanzasPanel, BorderLayout.CENTER);
 
-        JPanel transaccionesPanel = new JPanel();
+        JPanel transaccionesPanel = new JPanel(new BorderLayout(0, 6));
         transaccionesPanel.setBackground(new Color(192, 192, 192));
         transaccionesPanel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.GRAY),
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
-        transaccionesPanel.setLayout(null);
 
-        JLabel transferenciasLabel = new JLabel("Transferencias");
-        transferenciasLabel.setBounds(11, 11, 498, 17);
-        transferenciasLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        transferenciasLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        transaccionesPanel.add(transferenciasLabel);
-
+        // Transferencias recientes (arriba)
+        JPanel transferenciasSubPanel = new JPanel(new BorderLayout());
+        transferenciasSubPanel.setBackground(new Color(192, 192, 192));
+        transferenciasSubPanel.setBorder(BorderFactory.createTitledBorder("Transferencias recientes"));
         String[] columnNamesTransferencias = {"Remitente", "Destinatario", "Monto"};
         homeTransferenciasTableModel = new DefaultTableModel(columnNamesTransferencias, 0);
         JTable transferenciasTable = new JTable(homeTransferenciasTableModel);
         JScrollPane scrollPane = new JScrollPane(transferenciasTable);
-        scrollPane.setBounds(11, 28, 498, 187);
-        transaccionesPanel.add(scrollPane);
+        scrollPane.setPreferredSize(new Dimension(0, 120));
+        transferenciasSubPanel.add(scrollPane, BorderLayout.CENTER);
+        transaccionesPanel.add(transferenciasSubPanel, BorderLayout.NORTH);
+
+        // Deudas próximas a vencer (abajo izquierda)
+        JPanel deudasHomePanel = new JPanel(new BorderLayout());
+        deudasHomePanel.setBackground(new Color(192, 192, 192));
+        deudasHomePanel.setBorder(BorderFactory.createTitledBorder("Deudas próximas a vencer"));
+        String[] deudasCols = {"Descripción", "Pendiente", "Vence", "Días"};
+        homeDeudasTableModel = new DefaultTableModel(deudasCols, 0) {
+            @Override public boolean isCellEditable(int r, int c) { return false; }
+        };
+        JTable deudasHomeTable = new JTable(homeDeudasTableModel) {
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                if (!isRowSelected(row)) {
+                    Object val = getModel().getValueAt(row, 3);
+                    String diasStr = val != null ? val.toString() : "";
+                    if ("Vencida".equals(diasStr)) {
+                        c.setForeground(new Color(160, 0, 0));
+                    } else {
+                        try {
+                            int dias = Integer.parseInt(diasStr.replaceAll("[^0-9]", ""));
+                            if (dias <= 7) c.setForeground(new Color(160, 0, 0));
+                            else if (dias <= 30) c.setForeground(new Color(180, 100, 0));
+                            else c.setForeground(Color.BLACK);
+                        } catch (NumberFormatException ex) {
+                            c.setForeground(Color.BLACK);
+                        }
+                    }
+                }
+                return c;
+            }
+        };
+        deudasHomePanel.add(new JScrollPane(deudasHomeTable), BorderLayout.CENTER);
+
+        // Objetivos activos (abajo derecha)
+        JPanel objetivosHomePanel = new JPanel(new BorderLayout());
+        objetivosHomePanel.setBackground(new Color(192, 192, 192));
+        objetivosHomePanel.setBorder(BorderFactory.createTitledBorder("Objetivos activos"));
+        String[] objetivosCols = {"Descripción", "Ahorro/mes", "Tiempo estimado"};
+        homeObjetivosTableModel = new DefaultTableModel(objetivosCols, 0) {
+            @Override public boolean isCellEditable(int r, int c) { return false; }
+        };
+        JTable objetivosHomeTable = new JTable(homeObjetivosTableModel);
+        objetivosHomePanel.add(new JScrollPane(objetivosHomeTable), BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 8, 0));
+        bottomPanel.setBackground(new Color(192, 192, 192));
+        bottomPanel.add(deudasHomePanel);
+        bottomPanel.add(objetivosHomePanel);
+        transaccionesPanel.add(bottomPanel, BorderLayout.CENTER);
 
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBackground(Color.LIGHT_GRAY);
@@ -411,16 +469,6 @@ public class MainView extends JFrame {
         centerPanel.add(datosFinancierosPanel, BorderLayout.NORTH);
         centerPanel.add(transaccionesPanel, BorderLayout.CENTER);
 
-        JLabel lblIcoConstruc = new JLabel("");
-        lblIcoConstruc.setIcon(new ImageIcon("C:\\Users\\aleja\\Downloads\\icons8-en-construcción-100.png"));
-        lblIcoConstruc.setBounds(184, 255, 105, 82);
-        transaccionesPanel.add(lblIcoConstruc);
-
-        JLabel lblMensajeConstruc = new JLabel("En Construcción");
-        lblMensajeConstruc.setFont(new Font("Tahoma", Font.BOLD, 18));
-        lblMensajeConstruc.setBounds(165, 347, 163, 22);
-        transaccionesPanel.add(lblMensajeConstruc);
-
         panel.add(centerPanel, BorderLayout.CENTER);
         panel.add(rightPanel, BorderLayout.EAST);
 
@@ -451,10 +499,52 @@ public class MainView extends JFrame {
             homeTransferenciasTableModel.addRow(fila);
         }
 
+        actualizarPanelInferior();
+
         estadisticasView.actualizarTotales();
         estadisticasView.actualizarTablaObjetivos();
         estadisticasView.actualizarTablaDeudas();
         estadisticasView.actualizarTablaTransferencias();
+    }
+
+    private void actualizarPanelInferior() {
+        homeDeudasTableModel.setRowCount(0);
+        List<Deuda> deudas = new TablaDeuda().obtenerDeudasPorUsuario(idUsuarioActual);
+        deudas.stream()
+            .filter(d -> "EN PROGRESO".equals(d.getEstado()))
+            .sorted(Comparator.comparingLong(d -> diasHastaVencimiento(d.getFechaVencimiento())))
+            .limit(5)
+            .forEach(d -> {
+                long dias = diasHastaVencimiento(d.getFechaVencimiento());
+                String diasStr = dias >= 0 ? dias + " días" : "Vencida";
+                homeDeudasTableModel.addRow(new Object[]{
+                    d.getDescripcion(),
+                    String.format("%.2f €", d.getMontoPendiente()),
+                    d.getFechaVencimiento(),
+                    diasStr
+                });
+            });
+
+        homeObjetivosTableModel.setRowCount(0);
+        List<ObjetivoFinanciero> objetivos = new TablaObjetivoFinanciero().obtenerObjetivosPorUsuario(idUsuarioActual);
+        objetivos.stream()
+            .filter(o -> "En progreso".equals(o.getEstado()))
+            .limit(5)
+            .forEach(o -> homeObjetivosTableModel.addRow(new Object[]{
+                o.getDescripcion(),
+                String.format("%.2f €/mes", o.getAhorroMensualSugerido()),
+                o.getTiempoNecesario()
+            }));
+    }
+
+    private long diasHastaVencimiento(String fechaStr) {
+        for (String formato : new String[]{"dd-MM-yyyy", "dd/MM/yyyy"}) {
+            try {
+                LocalDate fecha = LocalDate.parse(fechaStr, DateTimeFormatter.ofPattern(formato));
+                return ChronoUnit.DAYS.between(LocalDate.now(), fecha);
+            } catch (Exception ignored) {}
+        }
+        return Long.MAX_VALUE;
     }
 
     private void actualizarTotalesPorCategoria(Map<String, Double> totalPorCategoria) {
