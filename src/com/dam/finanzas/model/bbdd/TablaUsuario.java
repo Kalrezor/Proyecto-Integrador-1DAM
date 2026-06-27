@@ -95,6 +95,109 @@ public class TablaUsuario {
         }
     }
 
+    public Usuario obtenerUsuarioPorId(int idUsuario) {
+        Usuario usuario = null;
+        String query = "SELECT " + NOM_COL_NOM + ", " + NOM_COL_EMAIL + ", " + NOM_COL_PASW
+                + " FROM " + NOM_TABLA_USER + " WHERE " + NOM_COL_ID_USER + " = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = conBBDD.getConexion();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, idUsuario);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                usuario = new Usuario(idUsuario, rs.getString(NOM_COL_NOM),
+                        rs.getString(NOM_COL_EMAIL), rs.getString(NOM_COL_PASW));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (con != null) con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return usuario;
+    }
+
+    public int actualizarNombre(int idUsuario, String nuevoNombre) {
+        String query = "UPDATE " + NOM_TABLA_USER + " SET " + NOM_COL_NOM
+                + " = ? WHERE " + NOM_COL_ID_USER + " = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = conBBDD.getConexion();
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, nuevoNombre);
+            pstmt.setInt(2, idUsuario);
+            return pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (con != null) con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Returns: 1 = success, -1 = contraseña actual incorrecta, 0 = error de BD
+    public int actualizarContrasena(int idUsuario, String contrasenaActual, String nuevaContrasena) {
+        String queryCheck = "SELECT " + NOM_COL_PASW + " FROM " + NOM_TABLA_USER
+                + " WHERE " + NOM_COL_ID_USER + " = ?";
+        String queryUpdate = "UPDATE " + NOM_TABLA_USER + " SET " + NOM_COL_PASW
+                + " = ? WHERE " + NOM_COL_ID_USER + " = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = conBBDD.getConexion();
+
+            pstmt = con.prepareStatement(queryCheck);
+            pstmt.setInt(1, idUsuario);
+            rs = pstmt.executeQuery();
+
+            if (!rs.next() || !rs.getString(NOM_COL_PASW).equals(contrasenaActual)) {
+                return -1;
+            }
+
+            rs.close();
+            pstmt.close();
+
+            pstmt = con.prepareStatement(queryUpdate);
+            pstmt.setString(1, nuevaContrasena);
+            pstmt.setInt(2, idUsuario);
+            return pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (con != null) con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public Usuario obtenerUsuarioPorCorreo(String correo) {
         Usuario usuario = null;
         String query = "SELECT " + NOM_COL_ID_USER + ", " + NOM_COL_NOM + ", " + NOM_COL_PASW + " FROM " + NOM_TABLA_USER

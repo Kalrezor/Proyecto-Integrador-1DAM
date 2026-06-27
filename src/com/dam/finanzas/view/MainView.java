@@ -35,6 +35,8 @@ public class MainView extends JFrame {
 
     private EstadisticasView estadisticasView;
     private DefaultTableModel homeTransferenciasTableModel;
+    private JLabel homeWelcomeLabel;
+    private JLabel homeUserNameLabel;
     private DefaultTableModel homeDeudasTableModel;
     private DefaultTableModel homeObjetivosTableModel;
 	private JLabel lblOcio;
@@ -84,6 +86,7 @@ public class MainView extends JFrame {
         contentPanel.add(estadisticasView.createEstadisticasPanel(), "ESTADISTICAS");
 
         contentPanel.add(new GuiaView(), "GUIA");
+        contentPanel.add(new PerfilView(idUsuarioActual, this), "PERFIL");
 
         getContentPane().add(contentPanel, BorderLayout.CENTER);
 
@@ -216,21 +219,21 @@ public class MainView extends JFrame {
             }
         });
 
-        JButton btnSalir = new JButton("Salir");
-        configureButton(btnSalir);
-        GridBagConstraints gbcSalir = new GridBagConstraints();
-        gbcSalir.fill = GridBagConstraints.BOTH;
-        gbcSalir.anchor = GridBagConstraints.NORTH;
-        gbcSalir.weightx = 1.0;
-        gbcSalir.weighty = 1.0;
-        gbcSalir.gridy = 7;
-        gbcSalir.insets = new Insets(5, 10, 5, 10);
-        sidebar.add(btnSalir, gbcSalir);
+        JButton btnPerfil = new JButton("Perfil");
+        configureButton(btnPerfil);
+        GridBagConstraints gbcPerfil = new GridBagConstraints();
+        gbcPerfil.fill = GridBagConstraints.BOTH;
+        gbcPerfil.anchor = GridBagConstraints.NORTH;
+        gbcPerfil.weightx = 1.0;
+        gbcPerfil.weighty = 1.0;
+        gbcPerfil.gridy = 7;
+        gbcPerfil.insets = new Insets(5, 10, 5, 10);
+        sidebar.add(btnPerfil, gbcPerfil);
 
-        btnSalir.addActionListener(new ActionListener() {
+        btnPerfil.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+                cardLayout.show(contentPanel, "PERFIL");
             }
         });
 
@@ -251,10 +254,10 @@ public class MainView extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.LIGHT_GRAY);
 
-        JLabel welcomeLabel = new JLabel("¡Bienvenid@ " + SesionUsuario.getInstancia().getNombreUsuario() + "!");
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        panel.add(welcomeLabel, BorderLayout.NORTH);
+        homeWelcomeLabel = new JLabel("¡Bienvenid@ " + SesionUsuario.getInstancia().getNombreUsuario() + "!");
+        homeWelcomeLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        homeWelcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        panel.add(homeWelcomeLabel, BorderLayout.NORTH);
 
         JPanel datosFinancierosPanel = new JPanel(new BorderLayout());
         datosFinancierosPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -387,10 +390,10 @@ public class MainView extends JFrame {
         rightHeader.setBackground(Color.LIGHT_GRAY);
         JLabel userIcon = new JLabel("👤");
         userIcon.setFont(new Font("Arial", Font.BOLD, 24));
-        JLabel userNameLabel = new JLabel(SesionUsuario.getInstancia().getNombreUsuario());
-        userNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        homeUserNameLabel = new JLabel(SesionUsuario.getInstancia().getNombreUsuario());
+        homeUserNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
         rightHeader.add(userIcon, BorderLayout.WEST);
-        rightHeader.add(userNameLabel, BorderLayout.CENTER);
+        rightHeader.add(homeUserNameLabel, BorderLayout.CENTER);
         rightPanel.add(rightHeader, BorderLayout.NORTH);
 
         JPanel gastosListPanel = new JPanel(new GridLayout(0, 1, 0, 1));
@@ -584,6 +587,11 @@ public class MainView extends JFrame {
             MainView frame = new MainView(idUsuarioActual);
             frame.setVisible(true);
         });
+    }
+
+    public void actualizarNombreEnHome(String nuevoNombre) {
+        homeWelcomeLabel.setText("¡Bienvenid@ " + nuevoNombre + "!");
+        homeUserNameLabel.setText(nuevoNombre);
     }
 
     public Map<String, Double> getGastosMap() {
