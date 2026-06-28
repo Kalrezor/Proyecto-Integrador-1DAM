@@ -17,20 +17,31 @@ public class PerfilView extends JPanel {
         this.idUsuarioActual = idUsuarioActual;
         this.mainView = mainView;
         setLayout(new BorderLayout());
-        setBackground(Color.LIGHT_GRAY);
+        setBackground(UIUtils.BG);
         initialize();
     }
 
     private void initialize() {
+        JPanel headerPanel = new JPanel(new BorderLayout(0, 2));
+        headerPanel.setBackground(UIUtils.BG_CARD);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtils.BORDER),
+            BorderFactory.createEmptyBorder(10, 16, 10, 16)));
         JLabel titleLabel = new JLabel("Perfil de Usuario");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setForeground(UIUtils.TEXT);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 0, 10, 0));
-        add(titleLabel, BorderLayout.NORTH);
+        headerPanel.add(titleLabel, BorderLayout.NORTH);
+        JLabel subtitleLabel = new JLabel("Gestiona tu cuenta y preferencias");
+        subtitleLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+        subtitleLabel.setForeground(UIUtils.TEXT_MUTED);
+        subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        headerPanel.add(subtitleLabel, BorderLayout.CENTER);
+        add(headerPanel, BorderLayout.NORTH);
 
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setBackground(Color.LIGHT_GRAY);
+        contentPanel.setBackground(UIUtils.BG);
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 60, 20, 60));
 
         contentPanel.add(createInfoCard());
@@ -45,6 +56,8 @@ public class PerfilView extends JPanel {
         JScrollPane scroll = new JScrollPane(contentPanel);
         scroll.setBorder(null);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scroll, BorderLayout.CENTER);
     }
 
@@ -52,21 +65,38 @@ public class PerfilView extends JPanel {
         JPanel card = new JPanel(new BorderLayout(15, 0));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.GRAY),
+            BorderFactory.createLineBorder(UIUtils.BORDER),
             BorderFactory.createEmptyBorder(20, 25, 20, 25)
         ));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
-
-        JLabel avatarLabel = new JLabel("👤");
-        avatarLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
-        avatarLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        avatarLabel.setPreferredSize(new Dimension(65, 65));
-        card.add(avatarLabel, BorderLayout.WEST);
 
         TablaUsuario tablaUsuario = new TablaUsuario();
         Usuario usuario = tablaUsuario.obtenerUsuarioPorId(idUsuarioActual);
         String nombre = usuario != null ? usuario.getNombre() : "—";
         String correo = usuario != null ? usuario.getCorreo() : "—";
+
+        String inicial = (nombre != null && !nombre.isEmpty() && !nombre.equals("—"))
+            ? nombre.substring(0, 1).toUpperCase() : "?";
+        JPanel avatarPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(UIUtils.ACCENT);
+                g2.fillOval(0, 0, getWidth(), getHeight());
+                g2.setColor(Color.WHITE);
+                g2.setFont(new Font("Arial", Font.BOLD, 26));
+                FontMetrics fm = g2.getFontMetrics();
+                int x = (getWidth() - fm.stringWidth(inicial)) / 2;
+                int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+                g2.drawString(inicial, x, y);
+                g2.dispose();
+            }
+        };
+        avatarPanel.setPreferredSize(new Dimension(62, 62));
+        avatarPanel.setOpaque(false);
+        card.add(avatarPanel, BorderLayout.WEST);
 
         JPanel infoPanel = new JPanel(new GridLayout(3, 1, 0, 4));
         infoPanel.setBackground(Color.WHITE);
@@ -92,7 +122,7 @@ public class PerfilView extends JPanel {
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), "Cambiar nombre"),
+            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(UIUtils.BORDER), "Cambiar nombre"),
             BorderFactory.createEmptyBorder(8, 15, 12, 15)
         ));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 160));
@@ -121,7 +151,7 @@ public class PerfilView extends JPanel {
         gbcMsg.insets = new Insets(0, 5, 4, 5);
         card.add(lblMensaje, gbcMsg);
 
-        JButton btnGuardar = new JButton("Guardar nombre");
+        JButton btnGuardar = UIUtils.crearBoton("Guardar nombre", UIUtils.ACCENT, Color.WHITE);
         GridBagConstraints gbcBtn = new GridBagConstraints();
         gbcBtn.gridx = 0; gbcBtn.gridy = 2; gbcBtn.gridwidth = 2;
         gbcBtn.anchor = GridBagConstraints.CENTER;
@@ -163,7 +193,7 @@ public class PerfilView extends JPanel {
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), "Cambiar contraseña"),
+            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(UIUtils.BORDER), "Cambiar contraseña"),
             BorderFactory.createEmptyBorder(8, 15, 12, 15)
         ));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
@@ -203,7 +233,7 @@ public class PerfilView extends JPanel {
         gbcMsg.insets = new Insets(0, 5, 4, 5);
         card.add(lblMensaje, gbcMsg);
 
-        JButton btnGuardar = new JButton("Guardar contraseña");
+        JButton btnGuardar = UIUtils.crearBoton("Guardar contraseña", UIUtils.ACCENT, Color.WHITE);
         GridBagConstraints gbcBtn = new GridBagConstraints();
         gbcBtn.gridx = 0; gbcBtn.gridy = 4; gbcBtn.gridwidth = 2;
         gbcBtn.anchor = GridBagConstraints.CENTER;
@@ -252,18 +282,12 @@ public class PerfilView extends JPanel {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.GRAY),
+            BorderFactory.createLineBorder(UIUtils.BORDER),
             BorderFactory.createEmptyBorder(15, 25, 15, 25)
         ));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
 
-        JButton btnSalir = new JButton("Cerrar sesión");
-        btnSalir.setFont(new Font("Arial", Font.BOLD, 14));
-        btnSalir.setForeground(Color.WHITE);
-        btnSalir.setBackground(new Color(180, 30, 30));
-        btnSalir.setOpaque(true);
-        btnSalir.setBorderPainted(false);
-        btnSalir.setFocusPainted(false);
+        JButton btnSalir = UIUtils.crearBoton("Cerrar sesión", UIUtils.DANGER, Color.WHITE);
         btnSalir.addActionListener(e -> System.exit(0));
         card.add(btnSalir, BorderLayout.CENTER);
 

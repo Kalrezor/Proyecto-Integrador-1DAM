@@ -39,6 +39,9 @@ public class MainView extends JFrame {
     private JTable homeTransferenciasTable;
     private JLabel homeWelcomeLabel;
     private JLabel homeUserNameLabel;
+    private JLabel homeAvatarLabel;
+    private JButton activeSidebarBtn = null;
+    private JButton[] sidebarBtns;
     private DefaultTableModel homeDeudasTableModel;
     private JTable homeDeudasTable;
     private DefaultTableModel homeObjetivosTableModel;
@@ -100,214 +103,172 @@ public class MainView extends JFrame {
     private JPanel createSidebar() {
         JPanel sidebar = new JPanel(new GridBagLayout());
         sidebar.setOpaque(true);
-        sidebar.setBackground(new Color(44, 62, 80));
-        sidebar.setPreferredSize(new Dimension(150, 600));
+        sidebar.setBackground(UIUtils.SIDEBAR);
+        sidebar.setPreferredSize(new Dimension(170, 600));
 
-        JPanel paddingPanel = new JPanel();
-        paddingPanel.setOpaque(false);
-        GridBagConstraints gbcPadding = new GridBagConstraints();
-        gbcPadding.gridy = 0;
-        gbcPadding.weighty = 0.1;
-        sidebar.add(paddingPanel, gbcPadding);
+        // Logo
+        JPanel logoPanel = new JPanel(new BorderLayout());
+        logoPanel.setBackground(UIUtils.SIDEBAR);
+        logoPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtils.SIDEBAR_HOVER),
+            BorderFactory.createEmptyBorder(14, 16, 14, 16)));
+        JLabel logoLabel = new JLabel("FlowTrack");
+        logoLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        logoLabel.setForeground(UIUtils.ACCENT);
+        logoPanel.add(logoLabel, BorderLayout.CENTER);
+        GridBagConstraints gbcLogo = new GridBagConstraints();
+        gbcLogo.fill = GridBagConstraints.HORIZONTAL;
+        gbcLogo.gridx = 0; gbcLogo.gridy = 0;
+        gbcLogo.weightx = 1.0; gbcLogo.weighty = 0;
+        sidebar.add(logoPanel, gbcLogo);
 
-        JButton btnInicio = new JButton("Inicio");
-        configureButton(btnInicio);
-        GridBagConstraints gbcInicio = new GridBagConstraints();
-        gbcInicio.fill = GridBagConstraints.BOTH;
-        gbcInicio.anchor = GridBagConstraints.NORTH;
-        gbcInicio.weightx = 1.0;
-        gbcInicio.weighty = 1.0;
-        gbcInicio.gridy = 1;
-        gbcInicio.insets = new Insets(5, 10, 5, 10);
-        sidebar.add(btnInicio, gbcInicio);
+        String[] labels = {"Inicio", "Transacciones", "Deudas", "Objetivos", "Estadísticas", "Perfil", "Guía"};
+        String[] cards  = {"HOME", "TRANSACCIONES", "DEUDAS", "OBJETIVOS", "ESTADISTICAS", "PERFIL", "GUIA"};
+        sidebarBtns = new JButton[labels.length];
 
-        btnInicio.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(contentPanel, "HOME");
-                System.out.println("Inicio");
-            }
-        });
+        for (int i = 0; i < labels.length; i++) {
+            sidebarBtns[i] = new JButton(labels[i]);
+            configureButton(sidebarBtns[i]);
+            final int idx = i;
+            sidebarBtns[i].addActionListener(e -> {
+                cardLayout.show(contentPanel, cards[idx]);
+                setSidebarActive(sidebarBtns[idx]);
+            });
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.anchor = GridBagConstraints.NORTH;
+            gbc.weightx = 1.0;
+            gbc.weighty = 1.0;
+            gbc.gridy = i + 1;
+            gbc.insets = new Insets(5, 10, 5, 10);
+            sidebar.add(sidebarBtns[i], gbc);
+        }
 
-        JButton btnTransacciones = new JButton("Transacciones");
-        configureButton(btnTransacciones);
-        GridBagConstraints gbcTransacciones = new GridBagConstraints();
-        gbcTransacciones.fill = GridBagConstraints.BOTH;
-        gbcTransacciones.anchor = GridBagConstraints.NORTH;
-        gbcTransacciones.weightx = 1.0;
-        gbcTransacciones.weighty = 1.0;
-        gbcTransacciones.gridy = 2;
-        gbcTransacciones.insets = new Insets(5, 10, 5, 10);
-        sidebar.add(btnTransacciones, gbcTransacciones);
-
-        btnTransacciones.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(contentPanel, "TRANSACCIONES");
-                System.out.println("Transacciones");
-            }
-        });
-
-        JButton btnDeudas = new JButton("Deudas");
-        configureButton(btnDeudas);
-        GridBagConstraints gbcDeudas = new GridBagConstraints();
-        gbcDeudas.fill = GridBagConstraints.BOTH;
-        gbcDeudas.anchor = GridBagConstraints.NORTH;
-        gbcDeudas.weightx = 1.0;
-        gbcDeudas.weighty = 1.0;
-        gbcDeudas.gridy = 3;
-        gbcDeudas.insets = new Insets(5, 10, 5, 10);
-        sidebar.add(btnDeudas, gbcDeudas);
-
-        btnDeudas.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(contentPanel, "DEUDAS");
-                System.out.println("Deudas");
-            }
-        });
-
-        JButton btnObjetivos = new JButton("Objetivos");
-        configureButton(btnObjetivos);
-        GridBagConstraints gbcObjetivos = new GridBagConstraints();
-        gbcObjetivos.fill = GridBagConstraints.BOTH;
-        gbcObjetivos.anchor = GridBagConstraints.NORTH;
-        gbcObjetivos.weightx = 1.0;
-        gbcObjetivos.weighty = 1.0;
-        gbcObjetivos.gridy = 4;
-        gbcObjetivos.insets = new Insets(5, 10, 5, 10);
-        sidebar.add(btnObjetivos, gbcObjetivos);
-
-        btnObjetivos.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(contentPanel, "OBJETIVOS");
-                System.out.println("Objetivos");
-            }
-        });
-
-        JButton btnEstadisticas = new JButton("Estadísticas");
-        configureButton(btnEstadisticas);
-        GridBagConstraints gbcEstadisticas = new GridBagConstraints();
-        gbcEstadisticas.fill = GridBagConstraints.BOTH;
-        gbcEstadisticas.anchor = GridBagConstraints.NORTH;
-        gbcEstadisticas.weightx = 1.0;
-        gbcEstadisticas.weighty = 1.0;
-        gbcEstadisticas.gridy = 5;
-        gbcEstadisticas.insets = new Insets(5, 10, 5, 10);
-        sidebar.add(btnEstadisticas, gbcEstadisticas);
-
-        btnEstadisticas.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(contentPanel, "ESTADISTICAS");
-                System.out.println("Estadísticas");
-            }
-        });
-
-        JButton btnGuia = new JButton("Guía");
-        configureButton(btnGuia);
-        GridBagConstraints gbcGuia = new GridBagConstraints();
-        gbcGuia.fill = GridBagConstraints.BOTH;
-        gbcGuia.anchor = GridBagConstraints.NORTH;
-        gbcGuia.weightx = 1.0;
-        gbcGuia.weighty = 1.0;
-        gbcGuia.gridy = 6;
-        gbcGuia.insets = new Insets(5, 10, 5, 10);
-        sidebar.add(btnGuia, gbcGuia);
-
-        btnGuia.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(contentPanel, "GUIA");
-            }
-        });
-
-        JButton btnPerfil = new JButton("Perfil");
-        configureButton(btnPerfil);
-        GridBagConstraints gbcPerfil = new GridBagConstraints();
-        gbcPerfil.fill = GridBagConstraints.BOTH;
-        gbcPerfil.anchor = GridBagConstraints.NORTH;
-        gbcPerfil.weightx = 1.0;
-        gbcPerfil.weighty = 1.0;
-        gbcPerfil.gridy = 7;
-        gbcPerfil.insets = new Insets(5, 10, 5, 10);
-        sidebar.add(btnPerfil, gbcPerfil);
-
-        btnPerfil.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(contentPanel, "PERFIL");
-            }
-        });
-
+        setSidebarActive(sidebarBtns[0]);
         return sidebar;
     }
 
+    private void setSidebarActive(JButton btn) {
+        if (sidebarBtns != null) {
+            for (JButton b : sidebarBtns) {
+                b.setBackground(UIUtils.SIDEBAR);
+                b.setBorderPainted(false);
+            }
+        }
+        btn.setBackground(UIUtils.SIDEBAR_HOVER);
+        btn.setBorderPainted(true);
+        btn.setBorder(BorderFactory.createMatteBorder(0, 3, 0, 0, UIUtils.ACCENT));
+        activeSidebarBtn = btn;
+    }
+
     private void configureButton(JButton button) {
-        button.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        button.setBackground(new Color(44, 62, 80));
+        button.setFont(new Font("Arial", Font.BOLD, 13));
+        button.setBackground(UIUtils.SIDEBAR);
         button.setForeground(Color.WHITE);
         button.setOpaque(true);
         button.setBorderPainted(false);
         button.setFocusPainted(false);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.setPreferredSize(new Dimension(130, 130));
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) {
+                if (button != activeSidebarBtn)
+                    button.setBackground(UIUtils.SIDEBAR_HOVER);
+            }
+            @Override public void mouseExited(java.awt.event.MouseEvent e) {
+                if (button != activeSidebarBtn)
+                    button.setBackground(UIUtils.SIDEBAR);
+            }
+        });
     }
 
     private JPanel createHomePanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.LIGHT_GRAY);
+        panel.setBackground(UIUtils.BG);
 
-        homeWelcomeLabel = new JLabel("¡Hola, " + SesionUsuario.getInstancia().getNombreUsuario() + "!");
-        homeWelcomeLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        // Cabecera del home
+        JPanel headerPanel = new JPanel(new BorderLayout(0, 2));
+        headerPanel.setBackground(UIUtils.BG_CARD);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtils.BORDER),
+            BorderFactory.createEmptyBorder(10, 16, 10, 16)));
+
+        homeWelcomeLabel = new JLabel("Bienvenido a FlowTrack");
+        homeWelcomeLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        homeWelcomeLabel.setForeground(UIUtils.TEXT);
         homeWelcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        panel.add(homeWelcomeLabel, BorderLayout.NORTH);
+        headerPanel.add(homeWelcomeLabel, BorderLayout.NORTH);
+
+        JLabel userSubtitleLabel = new JLabel("Hola, " + SesionUsuario.getInstancia().getNombreUsuario());
+        userSubtitleLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+        userSubtitleLabel.setForeground(UIUtils.TEXT_MUTED);
+        userSubtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        headerPanel.add(userSubtitleLabel, BorderLayout.CENTER);
+
+        panel.add(headerPanel, BorderLayout.NORTH);
 
         JPanel datosFinancierosPanel = new JPanel(new BorderLayout());
-        datosFinancierosPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        datosFinancierosPanel.setBackground(Color.LIGHT_GRAY);
+        datosFinancierosPanel.setBorder(BorderFactory.createEmptyBorder(6, 6, 4, 6));
+        datosFinancierosPanel.setBackground(UIUtils.BG);
 
         LocalDate fechaActual = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
         String mesActual = fechaActual.format(formatter);
 
-        JLabel mesActualLabel = new JLabel(mesActual);
-        mesActualLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        JLabel mesActualLabel = new JLabel(mesActual.substring(0, 1).toUpperCase() + mesActual.substring(1));
+        mesActualLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        mesActualLabel.setForeground(UIUtils.TEXT_MUTED);
         mesActualLabel.setHorizontalAlignment(SwingConstants.CENTER);
         datosFinancierosPanel.add(mesActualLabel, BorderLayout.NORTH);
 
-        JPanel finanzasPanel = new JPanel(new GridLayout(1, 3, 10, 0));
-        finanzasPanel.setBackground(new Color(192, 192, 192));
+        JPanel finanzasPanel = new JPanel(new GridLayout(1, 3, 8, 0));
+        finanzasPanel.setBackground(UIUtils.BG);
+        finanzasPanel.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
 
-        JPanel ingresosPanel = new JPanel(new BorderLayout());
-        ingresosPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        JPanel ingresosPanel = new JPanel(new BorderLayout(0, 2));
+        ingresosPanel.setBackground(UIUtils.BG_SUCCESS);
+        ingresosPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(187, 247, 208)),
+            BorderFactory.createEmptyBorder(10, 12, 10, 12)));
         JLabel ingresosLabel = new JLabel("Ingresos");
-        ingresosLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        ingresosLabel.setFont(new Font("Arial", Font.BOLD, 11));
+        ingresosLabel.setForeground(UIUtils.SUCCESS);
         ingresosLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        ingresosValueLabel = new JLabel("0 €");
-        ingresosValueLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        ingresosValueLabel = new JLabel("0,00 €");
+        ingresosValueLabel.setFont(new Font("Arial", Font.BOLD, 17));
+        ingresosValueLabel.setForeground(UIUtils.SUCCESS);
         ingresosValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
         ingresosPanel.add(ingresosLabel, BorderLayout.NORTH);
         ingresosPanel.add(ingresosValueLabel, BorderLayout.CENTER);
 
-        JPanel gastosPanel = new JPanel(new BorderLayout());
-        gastosPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        JPanel gastosPanel = new JPanel(new BorderLayout(0, 2));
+        gastosPanel.setBackground(UIUtils.BG_DANGER);
+        gastosPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(254, 202, 202)),
+            BorderFactory.createEmptyBorder(10, 12, 10, 12)));
         JLabel gastosLabel = new JLabel("Gastos");
-        gastosLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        gastosLabel.setFont(new Font("Arial", Font.BOLD, 11));
+        gastosLabel.setForeground(UIUtils.DANGER);
         gastosLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        gastosValueLabel = new JLabel("0 €");
-        gastosValueLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        gastosValueLabel = new JLabel("0,00 €");
+        gastosValueLabel.setFont(new Font("Arial", Font.BOLD, 17));
+        gastosValueLabel.setForeground(UIUtils.DANGER);
         gastosValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
         gastosPanel.add(gastosLabel, BorderLayout.NORTH);
         gastosPanel.add(gastosValueLabel, BorderLayout.CENTER);
 
-        JPanel beneficioNetoPanel = new JPanel(new BorderLayout());
-        beneficioNetoPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        JPanel beneficioNetoPanel = new JPanel(new BorderLayout(0, 2));
+        beneficioNetoPanel.setBackground(UIUtils.BG_ACCENT);
+        beneficioNetoPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(191, 219, 254)),
+            BorderFactory.createEmptyBorder(10, 12, 10, 12)));
         JLabel beneficioNetoLabel = new JLabel("Beneficio Neto");
-        beneficioNetoLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        beneficioNetoLabel.setFont(new Font("Arial", Font.BOLD, 11));
+        beneficioNetoLabel.setForeground(UIUtils.ACCENT);
         beneficioNetoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        beneficioNetoValueLabel = new JLabel("0 €");
-        beneficioNetoValueLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        beneficioNetoValueLabel = new JLabel("0,00 €");
+        beneficioNetoValueLabel.setFont(new Font("Arial", Font.BOLD, 17));
+        beneficioNetoValueLabel.setForeground(UIUtils.ACCENT);
         beneficioNetoValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
         beneficioNetoPanel.add(beneficioNetoLabel, BorderLayout.NORTH);
         beneficioNetoPanel.add(beneficioNetoValueLabel, BorderLayout.CENTER);
@@ -319,17 +280,23 @@ public class MainView extends JFrame {
         datosFinancierosPanel.add(finanzasPanel, BorderLayout.CENTER);
 
         // 3 tablas apiladas verticalmente
-        JPanel tablesPanel = new JPanel(new GridLayout(3, 1, 0, 5));
-        tablesPanel.setBackground(new Color(192, 192, 192));
-        tablesPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.GRAY),
-            BorderFactory.createEmptyBorder(8, 8, 8, 8)
-        ));
+        JPanel tablesPanel = new JPanel(new GridLayout(3, 1, 0, 8));
+        tablesPanel.setBackground(UIUtils.BG);
+        tablesPanel.setBorder(BorderFactory.createEmptyBorder(4, 8, 8, 8));
 
         // Transferencias recientes
         JPanel transferenciasSubPanel = new JPanel(new BorderLayout());
-        transferenciasSubPanel.setBackground(new Color(192, 192, 192));
-        transferenciasSubPanel.setBorder(BorderFactory.createTitledBorder("Transferencias recientes"));
+        transferenciasSubPanel.setBackground(UIUtils.BG_CARD);
+        transferenciasSubPanel.setBorder(BorderFactory.createLineBorder(UIUtils.BORDER));
+        JPanel secHdrTr = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
+        secHdrTr.setBackground(UIUtils.BG_CARD);
+        secHdrTr.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtils.BORDER));
+        JLabel secTitleTr = new JLabel("Transferencias recientes");
+        secTitleTr.setFont(new Font("Arial", Font.BOLD, 12));
+        secTitleTr.setForeground(UIUtils.TEXT);
+        secTitleTr.setBorder(BorderFactory.createMatteBorder(0, 3, 0, 0, UIUtils.ACCENT));
+        secHdrTr.add(secTitleTr);
+        transferenciasSubPanel.add(secHdrTr, BorderLayout.NORTH);
         String[] columnNamesTransferencias = {"Remitente", "Destinatario", "Monto"};
         homeTransferenciasTableModel = new DefaultTableModel(columnNamesTransferencias, 0);
         homeTransferenciasTable = new JTable(homeTransferenciasTableModel);
@@ -340,13 +307,23 @@ public class MainView extends JFrame {
         homeTransferenciasTable.getTableHeader().setResizingAllowed(false);
         homeTransferenciasTable.setRowHeight(22);
         homeTransferenciasTable.setFillsViewportHeight(true);
+        UIUtils.estilizarTabla(homeTransferenciasTable);
         transferenciasSubPanel.add(new JScrollPane(homeTransferenciasTable), BorderLayout.CENTER);
         tablesPanel.add(transferenciasSubPanel);
 
         // Deudas próximas a vencer
         JPanel deudasHomePanel = new JPanel(new BorderLayout());
-        deudasHomePanel.setBackground(new Color(192, 192, 192));
-        deudasHomePanel.setBorder(BorderFactory.createTitledBorder("Deudas próximas a vencer"));
+        deudasHomePanel.setBackground(UIUtils.BG_CARD);
+        deudasHomePanel.setBorder(BorderFactory.createLineBorder(UIUtils.BORDER));
+        JPanel secHdrDeu = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
+        secHdrDeu.setBackground(UIUtils.BG_CARD);
+        secHdrDeu.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtils.BORDER));
+        JLabel secTitleDeu = new JLabel("Deudas próximas a vencer");
+        secTitleDeu.setFont(new Font("Arial", Font.BOLD, 12));
+        secTitleDeu.setForeground(UIUtils.TEXT);
+        secTitleDeu.setBorder(BorderFactory.createMatteBorder(0, 3, 0, 0, UIUtils.DANGER));
+        secHdrDeu.add(secTitleDeu);
+        deudasHomePanel.add(secHdrDeu, BorderLayout.NORTH);
         String[] deudasCols = {"Descripción", "Pendiente", "Vence", "Días"};
         homeDeudasTableModel = new DefaultTableModel(deudasCols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -381,13 +358,23 @@ public class MainView extends JFrame {
         homeDeudasTable.getTableHeader().setResizingAllowed(false);
         homeDeudasTable.setRowHeight(22);
         homeDeudasTable.setFillsViewportHeight(true);
+        UIUtils.estilizarTabla(homeDeudasTable);
         deudasHomePanel.add(new JScrollPane(homeDeudasTable), BorderLayout.CENTER);
         tablesPanel.add(deudasHomePanel);
 
         // Objetivos activos
         JPanel objetivosHomePanel = new JPanel(new BorderLayout());
-        objetivosHomePanel.setBackground(new Color(192, 192, 192));
-        objetivosHomePanel.setBorder(BorderFactory.createTitledBorder("Objetivos activos"));
+        objetivosHomePanel.setBackground(UIUtils.BG_CARD);
+        objetivosHomePanel.setBorder(BorderFactory.createLineBorder(UIUtils.BORDER));
+        JPanel secHdrObj = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
+        secHdrObj.setBackground(UIUtils.BG_CARD);
+        secHdrObj.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtils.BORDER));
+        JLabel secTitleObj = new JLabel("Objetivos activos");
+        secTitleObj.setFont(new Font("Arial", Font.BOLD, 12));
+        secTitleObj.setForeground(UIUtils.TEXT);
+        secTitleObj.setBorder(BorderFactory.createMatteBorder(0, 3, 0, 0, UIUtils.SUCCESS));
+        secHdrObj.add(secTitleObj);
+        objetivosHomePanel.add(secHdrObj, BorderLayout.NORTH);
         String[] objetivosCols = {"Descripción", "Ahorro/mes", "Tiempo estimado"};
         homeObjetivosTableModel = new DefaultTableModel(objetivosCols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -400,70 +387,160 @@ public class MainView extends JFrame {
         homeObjetivosTable.getTableHeader().setResizingAllowed(false);
         homeObjetivosTable.setRowHeight(22);
         homeObjetivosTable.setFillsViewportHeight(true);
+        UIUtils.estilizarTabla(homeObjetivosTable);
         objetivosHomePanel.add(new JScrollPane(homeObjetivosTable), BorderLayout.CENTER);
         tablesPanel.add(objetivosHomePanel);
 
         // Panel derecho - Gastos por categoría (grid 2 columnas, compacto)
         JPanel rightPanel = new JPanel(new BorderLayout(0, 4));
-        rightPanel.setBackground(Color.LIGHT_GRAY);
+        rightPanel.setBackground(UIUtils.BG_CARD);
         rightPanel.setPreferredSize(new Dimension(170, 0));
-        rightPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 4));
+        rightPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 1, 0, 0, UIUtils.BORDER),
+            BorderFactory.createEmptyBorder(8, 8, 8, 6)));
 
-        JPanel rightHeader = new JPanel(new BorderLayout(6, 0));
-        rightHeader.setBackground(Color.LIGHT_GRAY);
-        JLabel userIcon = new JLabel("👤");
-        userIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
-        homeUserNameLabel = new JLabel(SesionUsuario.getInstancia().getNombreUsuario());
-        homeUserNameLabel.setFont(new Font("Arial", Font.BOLD, 13));
-        rightHeader.add(userIcon, BorderLayout.WEST);
-        rightHeader.add(homeUserNameLabel, BorderLayout.CENTER);
-        rightPanel.add(rightHeader, BorderLayout.NORTH);
+        String nombreUsuario = SesionUsuario.getInstancia().getNombreUsuario();
+        String inicialUsuario = (nombreUsuario != null && !nombreUsuario.isEmpty())
+            ? nombreUsuario.substring(0, 1).toUpperCase() : "?";
+
+        homeAvatarLabel = new JLabel(inicialUsuario) {
+            @Override protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(UIUtils.ACCENT);
+                g2.fillOval(0, 0, getWidth(), getHeight());
+                g2.setColor(Color.WHITE);
+                g2.setFont(new Font("Arial", Font.BOLD, 14));
+                FontMetrics fm = g2.getFontMetrics();
+                String t = getText();
+                int x = (getWidth() - fm.stringWidth(t)) / 2;
+                int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+                g2.drawString(t, x, y);
+                g2.dispose();
+            }
+        };
+        homeAvatarLabel.setPreferredSize(new Dimension(30, 30));
+        homeAvatarLabel.setOpaque(false);
+
+        homeUserNameLabel = new JLabel(nombreUsuario);
+        homeUserNameLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        homeUserNameLabel.setForeground(UIUtils.TEXT);
+
+        JLabel chevron = new JLabel("▼");
+        chevron.setFont(new Font("Arial", Font.PLAIN, 9));
+        chevron.setForeground(UIUtils.TEXT_MUTED);
+
+        JPanel userButton = new JPanel(new BorderLayout(6, 0));
+        userButton.setBackground(UIUtils.BG_CARD);
+        userButton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(UIUtils.BORDER, 1),
+            BorderFactory.createEmptyBorder(5, 6, 5, 6)));
+        userButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        userButton.add(homeAvatarLabel, BorderLayout.WEST);
+        userButton.add(homeUserNameLabel, BorderLayout.CENTER);
+        userButton.add(chevron, BorderLayout.EAST);
+
+        JPopupMenu popupMenu = new JPopupMenu();
+        popupMenu.setBackground(UIUtils.BG_CARD);
+        popupMenu.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(UIUtils.BORDER, 1),
+            BorderFactory.createEmptyBorder(4, 0, 4, 0)));
+
+        // Item: Mi perfil
+        JMenuItem itemPerfil = new JMenuItem("  Mi perfil");
+        itemPerfil.setFont(new Font("Arial", Font.PLAIN, 13));
+        itemPerfil.setForeground(UIUtils.TEXT);
+        itemPerfil.setBackground(UIUtils.BG_CARD);
+        itemPerfil.setOpaque(true);
+        itemPerfil.setBorderPainted(false);
+        itemPerfil.setBorder(BorderFactory.createEmptyBorder(8, 14, 8, 14));
+        itemPerfil.addChangeListener(e ->
+            itemPerfil.setBackground(itemPerfil.getModel().isArmed() ? UIUtils.BG_ACCENT : UIUtils.BG_CARD));
+        itemPerfil.addActionListener(e -> cardLayout.show(contentPanel, "PERFIL"));
+        popupMenu.add(itemPerfil);
+
+        // Separador
+        javax.swing.JSeparator sep = new javax.swing.JSeparator();
+        sep.setForeground(UIUtils.BORDER);
+        popupMenu.add(sep);
+
+        // Item: Cerrar sesión
+        JMenuItem itemSalir = new JMenuItem("  Cerrar sesión");
+        itemSalir.setFont(new Font("Arial", Font.BOLD, 13));
+        itemSalir.setForeground(UIUtils.DANGER);
+        itemSalir.setBackground(UIUtils.BG_CARD);
+        itemSalir.setOpaque(true);
+        itemSalir.setBorderPainted(false);
+        itemSalir.setBorder(BorderFactory.createEmptyBorder(8, 14, 8, 14));
+        itemSalir.addChangeListener(e ->
+            itemSalir.setBackground(itemSalir.getModel().isArmed() ? UIUtils.BG_DANGER : UIUtils.BG_CARD));
+        itemSalir.addActionListener(e -> System.exit(0));
+        popupMenu.add(itemSalir);
+
+        userButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseClicked(java.awt.event.MouseEvent e) {
+                popupMenu.show(userButton, 0, userButton.getHeight());
+            }
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) {
+                userButton.setBackground(UIUtils.BG);
+            }
+            @Override public void mouseExited(java.awt.event.MouseEvent e) {
+                userButton.setBackground(UIUtils.BG_CARD);
+            }
+        });
+
+        rightPanel.add(userButton, BorderLayout.NORTH);
 
         JPanel gastosContainer = new JPanel();
         gastosContainer.setLayout(new BoxLayout(gastosContainer, BoxLayout.Y_AXIS));
-        gastosContainer.setBackground(Color.LIGHT_GRAY);
+        gastosContainer.setBackground(UIUtils.BG_CARD);
 
-        JLabel tiposGastosLabel = new JLabel("Tipos de Gastos");
-        tiposGastosLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        JLabel tiposGastosLabel = new JLabel("Gastos por categoría");
+        tiposGastosLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        tiposGastosLabel.setForeground(UIUtils.TEXT);
         tiposGastosLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        tiposGastosLabel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtils.BORDER),
+            BorderFactory.createEmptyBorder(0, 0, 6, 0)));
         gastosContainer.add(tiposGastosLabel);
-        gastosContainer.add(Box.createVerticalStrut(6));
+        gastosContainer.add(Box.createVerticalStrut(8));
 
-        Font catFont = new Font("Arial", Font.BOLD, 12);
-        JPanel gastosGrid = new JPanel(new GridLayout(8, 2, 4, 12));
-        gastosGrid.setBackground(Color.LIGHT_GRAY);
+        Font catNameFont = new Font("Arial", Font.PLAIN, 12);
+        Font catValFont  = new Font("Arial", Font.BOLD, 12);
+        JPanel gastosGrid = new JPanel(new GridLayout(8, 2, 4, 10));
+        gastosGrid.setBackground(UIUtils.BG_CARD);
         gastosGrid.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel l1 = new JLabel("Ocio"); l1.setFont(catFont);
-        lblOcio = new JLabel("0,00 €"); lblOcio.setFont(catFont); lblOcio.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel l1 = new JLabel("Ocio"); l1.setFont(catNameFont); l1.setForeground(UIUtils.TEXT_MUTED);
+        lblOcio = new JLabel("0,00 €"); lblOcio.setFont(catValFont); lblOcio.setForeground(UIUtils.TEXT); lblOcio.setHorizontalAlignment(SwingConstants.RIGHT);
         gastosGrid.add(l1); gastosGrid.add(lblOcio);
-        JLabel l2 = new JLabel("Ropa"); l2.setFont(catFont);
-        lblRopa = new JLabel("0,00 €"); lblRopa.setFont(catFont); lblRopa.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel l2 = new JLabel("Ropa"); l2.setFont(catNameFont); l2.setForeground(UIUtils.TEXT_MUTED);
+        lblRopa = new JLabel("0,00 €"); lblRopa.setFont(catValFont); lblRopa.setForeground(UIUtils.TEXT); lblRopa.setHorizontalAlignment(SwingConstants.RIGHT);
         gastosGrid.add(l2); gastosGrid.add(lblRopa);
-        JLabel l3 = new JLabel("Tecnología"); l3.setFont(catFont);
-        lblTecno = new JLabel("0,00 €"); lblTecno.setFont(catFont); lblTecno.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel l3 = new JLabel("Tecnología"); l3.setFont(catNameFont); l3.setForeground(UIUtils.TEXT_MUTED);
+        lblTecno = new JLabel("0,00 €"); lblTecno.setFont(catValFont); lblTecno.setForeground(UIUtils.TEXT); lblTecno.setHorizontalAlignment(SwingConstants.RIGHT);
         gastosGrid.add(l3); gastosGrid.add(lblTecno);
-        JLabel l4 = new JLabel("Salud"); l4.setFont(catFont);
-        lblSalud = new JLabel("0,00 €"); lblSalud.setFont(catFont); lblSalud.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel l4 = new JLabel("Salud"); l4.setFont(catNameFont); l4.setForeground(UIUtils.TEXT_MUTED);
+        lblSalud = new JLabel("0,00 €"); lblSalud.setFont(catValFont); lblSalud.setForeground(UIUtils.TEXT); lblSalud.setHorizontalAlignment(SwingConstants.RIGHT);
         gastosGrid.add(l4); gastosGrid.add(lblSalud);
-        JLabel l5 = new JLabel("Transporte"); l5.setFont(catFont);
-        lblTransporte = new JLabel("0,00 €"); lblTransporte.setFont(catFont); lblTransporte.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel l5 = new JLabel("Transporte"); l5.setFont(catNameFont); l5.setForeground(UIUtils.TEXT_MUTED);
+        lblTransporte = new JLabel("0,00 €"); lblTransporte.setFont(catValFont); lblTransporte.setForeground(UIUtils.TEXT); lblTransporte.setHorizontalAlignment(SwingConstants.RIGHT);
         gastosGrid.add(l5); gastosGrid.add(lblTransporte);
-        JLabel l6 = new JLabel("Comida"); l6.setFont(catFont);
-        lblComida = new JLabel("0,00 €"); lblComida.setFont(catFont); lblComida.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel l6 = new JLabel("Comida"); l6.setFont(catNameFont); l6.setForeground(UIUtils.TEXT_MUTED);
+        lblComida = new JLabel("0,00 €"); lblComida.setFont(catValFont); lblComida.setForeground(UIUtils.TEXT); lblComida.setHorizontalAlignment(SwingConstants.RIGHT);
         gastosGrid.add(l6); gastosGrid.add(lblComida);
-        JLabel l7 = new JLabel("Hogar"); l7.setFont(catFont);
-        lblHogar = new JLabel("0,00 €"); lblHogar.setFont(catFont); lblHogar.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel l7 = new JLabel("Hogar"); l7.setFont(catNameFont); l7.setForeground(UIUtils.TEXT_MUTED);
+        lblHogar = new JLabel("0,00 €"); lblHogar.setFont(catValFont); lblHogar.setForeground(UIUtils.TEXT); lblHogar.setHorizontalAlignment(SwingConstants.RIGHT);
         gastosGrid.add(l7); gastosGrid.add(lblHogar);
-        JLabel l8 = new JLabel("Educación"); l8.setFont(catFont);
-        lblEduca = new JLabel("0,00 €"); lblEduca.setFont(catFont); lblEduca.setHorizontalAlignment(SwingConstants.RIGHT);
+        JLabel l8 = new JLabel("Educación"); l8.setFont(catNameFont); l8.setForeground(UIUtils.TEXT_MUTED);
+        lblEduca = new JLabel("0,00 €"); lblEduca.setFont(catValFont); lblEduca.setForeground(UIUtils.TEXT); lblEduca.setHorizontalAlignment(SwingConstants.RIGHT);
         gastosGrid.add(l8); gastosGrid.add(lblEduca);
 
         gastosContainer.add(gastosGrid);
         rightPanel.add(gastosContainer, BorderLayout.CENTER);
 
         JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.setBackground(Color.LIGHT_GRAY);
+        centerPanel.setBackground(UIUtils.BG);
 
         centerPanel.add(datosFinancierosPanel, BorderLayout.NORTH);
         centerPanel.add(tablesPanel, BorderLayout.CENTER);
@@ -495,7 +572,9 @@ public class MainView extends JFrame {
 
         homeTransferenciasTableModel.setRowCount(0);
         for (Object[] fila : new TablaTransferencia().obtenerTransferencias(idUsuarioActual)) {
-            homeTransferenciasTableModel.addRow(fila);
+            homeTransferenciasTableModel.addRow(new Object[]{
+                fila[0], fila[1], String.format("%.2f €", ((Number) fila[2]).doubleValue())
+            });
         }
         UIUtils.ajustarTabla(homeTransferenciasTable);
 
@@ -569,8 +648,11 @@ public class MainView extends JFrame {
     }
 
     public void actualizarNombreEnHome(String nuevoNombre) {
-        homeWelcomeLabel.setText("¡Hola, " + nuevoNombre + "!");
         homeUserNameLabel.setText(nuevoNombre);
+        String inicial = (nuevoNombre != null && !nuevoNombre.isEmpty())
+            ? nuevoNombre.substring(0, 1).toUpperCase() : "?";
+        homeAvatarLabel.setText(inicial);
+        homeAvatarLabel.repaint();
     }
 
     public Map<String, Double> getGastosMap() {

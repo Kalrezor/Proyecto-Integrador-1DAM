@@ -6,8 +6,61 @@ import java.awt.*;
 
 public class UIUtils {
 
+    // Paleta principal
+    public static final Color BG           = new Color(245, 247, 250);
+    public static final Color BG_CARD      = Color.WHITE;
+    public static final Color BG_TABLE     = new Color(241, 245, 249);
+    public static final Color SIDEBAR      = new Color(15, 23, 42);
+    public static final Color SIDEBAR_HOVER = new Color(30, 41, 59);
+    public static final Color ACCENT       = new Color(59, 130, 246);
+    public static final Color ACCENT_DARK  = new Color(37, 99, 235);
+    public static final Color SUCCESS      = new Color(22, 163, 74);
+    public static final Color DANGER       = new Color(220, 38, 38);
+    public static final Color WARNING      = new Color(217, 119, 6);
+    public static final Color BORDER       = new Color(226, 232, 240);
+    public static final Color TEXT         = new Color(15, 23, 42);
+    public static final Color TEXT_MUTED   = new Color(100, 116, 139);
+
+    // Fondos suaves para tarjetas de KPI
+    public static final Color BG_SUCCESS = new Color(240, 253, 244);
+    public static final Color BG_DANGER  = new Color(254, 242, 242);
+    public static final Color BG_ACCENT  = new Color(239, 246, 255);
+
     private UIUtils() {}
 
+    /** Botón redondeado con efecto hover. bg y fg son el color de fondo y texto. */
+    public static JButton crearBoton(String texto, Color bg, Color fg) {
+        JButton btn = new JButton(texto) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                if (getModel().isPressed()) {
+                    g2.setColor(bg.darker().darker());
+                } else if (getModel().isRollover()) {
+                    g2.setColor(bg.darker());
+                } else {
+                    g2.setColor(bg);
+                }
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+            @Override
+            protected void paintBorder(Graphics g) {}
+        };
+        btn.setFont(new Font("Arial", Font.BOLD, 13));
+        btn.setForeground(fg);
+        btn.setContentAreaFilled(false);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setOpaque(false);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 18, 8, 18));
+        return btn;
+    }
+
+    /** Ajusta anchos de columnas al contenido y reduce alto de fila. */
     public static void ajustarTabla(JTable table) {
         table.setRowHeight(22);
         table.setFillsViewportHeight(true);
@@ -22,5 +75,18 @@ public class UIUtils {
             }
             tc.setPreferredWidth(w);
         }
+    }
+
+    /** Aplica estilos de color modernos a una JTable. */
+    public static void estilizarTabla(JTable table) {
+        table.setBackground(BG_CARD);
+        table.setGridColor(BORDER);
+        table.setSelectionBackground(new Color(219, 234, 254));
+        table.setSelectionForeground(TEXT);
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(BG_TABLE);
+        header.setForeground(TEXT_MUTED);
+        header.setFont(new Font("Arial", Font.BOLD, 12));
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER));
     }
 }

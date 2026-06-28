@@ -44,6 +44,7 @@ public class ObjetivosView extends JPanel {
         table.getTableHeader().setResizingAllowed(false);
         table.setRowHeight(22);
         table.setFillsViewportHeight(true);
+        UIUtils.estilizarTabla(table);
     }
 
     private void cargarObjetivos() {
@@ -53,16 +54,28 @@ public class ObjetivosView extends JPanel {
 
     public JPanel createObjetivosPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.LIGHT_GRAY);
+        panel.setBackground(UIUtils.BG);
 
-        JLabel titleLabel = new JLabel("Gestión de Objetivos Financieros");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        // Cabecera estilo home
+        JPanel headerPanel = new JPanel(new BorderLayout(0, 2));
+        headerPanel.setBackground(UIUtils.BG_CARD);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtils.BORDER),
+            BorderFactory.createEmptyBorder(10, 16, 10, 16)));
+        JLabel titleLabel = new JLabel("Gestión de Objetivos");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setForeground(UIUtils.TEXT);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        panel.add(titleLabel, BorderLayout.NORTH);
+        headerPanel.add(titleLabel, BorderLayout.NORTH);
+        JLabel subtitleLabel = new JLabel("Planifica y realiza seguimiento de tus metas financieras");
+        subtitleLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+        subtitleLabel.setForeground(UIUtils.TEXT_MUTED);
+        subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        headerPanel.add(subtitleLabel, BorderLayout.CENTER);
 
         JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
-        inputPanel.setBackground(Color.LIGHT_GRAY);
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        inputPanel.setBackground(UIUtils.BG);
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(12, 16, 8, 16));
 
         JTextField descripcionField = new JTextField("Descripción", 20);
         descripcionField.setForeground(Color.GRAY);
@@ -184,10 +197,7 @@ public class ObjetivosView extends JPanel {
             }
         });
 
-        JButton addButton = new JButton("Agregar Objetivo");
-        addButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        addButton.setBackground(new Color(44, 62, 80));
-        addButton.setForeground(Color.WHITE);
+        JButton addButton = UIUtils.crearBoton("Agregar Objetivo", UIUtils.ACCENT, Color.WHITE);
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -272,10 +282,7 @@ public class ObjetivosView extends JPanel {
             }
         });
 
-        JButton completeButton = new JButton("Marcar como Cumplido");
-        completeButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        completeButton.setBackground(new Color(44, 62, 80));
-        completeButton.setForeground(Color.WHITE);
+        JButton completeButton = UIUtils.crearBoton("Marcar como Cumplido", UIUtils.SUCCESS, Color.WHITE);
         completeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -297,17 +304,26 @@ public class ObjetivosView extends JPanel {
         });
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 8));
-        buttonPanel.setBackground(Color.LIGHT_GRAY);
+        buttonPanel.setBackground(UIUtils.BG);
         buttonPanel.add(addButton);
         buttonPanel.add(completeButton);
 
-        JPanel northWrapper = new JPanel(new BorderLayout());
-        northWrapper.setBackground(Color.LIGHT_GRAY);
-        northWrapper.add(inputPanel, BorderLayout.CENTER);
-        northWrapper.add(buttonPanel, BorderLayout.SOUTH);
+        JPanel formSection = new JPanel(new BorderLayout());
+        formSection.setBackground(UIUtils.BG);
+        formSection.add(inputPanel, BorderLayout.CENTER);
+        formSection.add(buttonPanel, BorderLayout.SOUTH);
 
-        panel.add(northWrapper, BorderLayout.NORTH);
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+        JPanel topSection = new JPanel(new BorderLayout());
+        topSection.setBackground(UIUtils.BG);
+        topSection.add(headerPanel, BorderLayout.NORTH);
+        topSection.add(formSection, BorderLayout.CENTER);
+        panel.add(topSection, BorderLayout.NORTH);
+
+        JPanel tableWrapper = new JPanel(new BorderLayout());
+        tableWrapper.setBackground(UIUtils.BG);
+        tableWrapper.setBorder(BorderFactory.createEmptyBorder(6, 14, 14, 14));
+        tableWrapper.add(new JScrollPane(table), BorderLayout.CENTER);
+        panel.add(tableWrapper, BorderLayout.CENTER);
 
         return panel;
     }

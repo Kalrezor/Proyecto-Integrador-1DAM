@@ -47,6 +47,7 @@ public class DeudasView extends JPanel {
         table.getTableHeader().setResizingAllowed(false);
         table.setRowHeight(22);
         table.setFillsViewportHeight(true);
+        UIUtils.estilizarTabla(table);
     }
 
     private void cargarDeudasUsuario() {
@@ -57,16 +58,28 @@ public class DeudasView extends JPanel {
 
     public JPanel createDeudasPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.LIGHT_GRAY);
+        panel.setBackground(UIUtils.BG);
 
+        // Cabecera estilo home
+        JPanel headerPanel = new JPanel(new BorderLayout(0, 2));
+        headerPanel.setBackground(UIUtils.BG_CARD);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtils.BORDER),
+            BorderFactory.createEmptyBorder(10, 16, 10, 16)));
         JLabel titleLabel = new JLabel("Gestión de Deudas");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setForeground(UIUtils.TEXT);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        panel.add(titleLabel, BorderLayout.NORTH);
+        headerPanel.add(titleLabel, BorderLayout.NORTH);
+        JLabel subtitleLabel = new JLabel("Registra y gestiona tus deudas pendientes");
+        subtitleLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+        subtitleLabel.setForeground(UIUtils.TEXT_MUTED);
+        subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        headerPanel.add(subtitleLabel, BorderLayout.CENTER);
 
-        JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
-        inputPanel.setBackground(Color.LIGHT_GRAY);
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        inputPanel.setBackground(UIUtils.BG);
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(12, 16, 8, 16));
 
         txtDescripcion = new JTextField("Descripción", 20);
         txtDescripcion.setForeground(Color.GRAY);
@@ -164,12 +177,7 @@ public class DeudasView extends JPanel {
             }
         });
 
-        btnRegistrarDeuda = new JButton("Registrar Deuda");
-        btnRegistrarDeuda.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        btnRegistrarDeuda.setBackground(new Color(44, 62, 80));
-        btnRegistrarDeuda.setForeground(Color.WHITE);
-        inputPanel.add(btnRegistrarDeuda);
-
+        btnRegistrarDeuda = UIUtils.crearBoton("Registrar Deuda", UIUtils.ACCENT, Color.WHITE);
         btnRegistrarDeuda.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -177,10 +185,7 @@ public class DeudasView extends JPanel {
             }
         });
 
-        JButton editButton = new JButton("Editar Deuda");
-        editButton.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        editButton.setBackground(new Color(44, 62, 80));
-        editButton.setForeground(Color.WHITE);
+        JButton editButton = UIUtils.crearBoton("Editar Deuda", UIUtils.SIDEBAR, Color.WHITE);
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -188,12 +193,27 @@ public class DeudasView extends JPanel {
             }
         });
 
-        inputPanel.add(editButton);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 8));
+        buttonPanel.setBackground(UIUtils.BG);
+        buttonPanel.add(btnRegistrarDeuda);
+        buttonPanel.add(editButton);
 
-        panel.add(inputPanel, BorderLayout.NORTH);
+        JPanel formSection = new JPanel(new BorderLayout());
+        formSection.setBackground(UIUtils.BG);
+        formSection.add(inputPanel, BorderLayout.CENTER);
+        formSection.add(buttonPanel, BorderLayout.SOUTH);
 
-        JScrollPane scrollPane = new JScrollPane(table);
-        panel.add(scrollPane, BorderLayout.CENTER);
+        JPanel topSection = new JPanel(new BorderLayout());
+        topSection.setBackground(UIUtils.BG);
+        topSection.add(headerPanel, BorderLayout.NORTH);
+        topSection.add(formSection, BorderLayout.CENTER);
+        panel.add(topSection, BorderLayout.NORTH);
+
+        JPanel tableWrapper = new JPanel(new BorderLayout());
+        tableWrapper.setBackground(UIUtils.BG);
+        tableWrapper.setBorder(BorderFactory.createEmptyBorder(6, 14, 14, 14));
+        tableWrapper.add(new JScrollPane(table), BorderLayout.CENTER);
+        panel.add(tableWrapper, BorderLayout.CENTER);
 
         return panel;
     }

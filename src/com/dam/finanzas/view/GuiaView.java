@@ -7,21 +7,39 @@ public class GuiaView extends JPanel {
 
     public GuiaView() {
         setLayout(new BorderLayout());
-        setBackground(Color.LIGHT_GRAY);
+        setBackground(UIUtils.BG);
         initialize();
     }
 
     private void initialize() {
+        // Cabecera estilo home
+        JPanel headerPanel = new JPanel(new BorderLayout(0, 2));
+        headerPanel.setBackground(UIUtils.BG_CARD);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtils.BORDER),
+            BorderFactory.createEmptyBorder(10, 16, 10, 16)));
+
         JLabel titleLabel = new JLabel("Guía de Uso");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setForeground(UIUtils.TEXT);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(15, 0, 10, 0));
-        add(titleLabel, BorderLayout.NORTH);
+        headerPanel.add(titleLabel, BorderLayout.NORTH);
 
-        JTabbedPane tabs = new JTabbedPane();
-        tabs.setFont(new Font("Arial", Font.BOLD, 13));
+        JLabel subtitleLabel = new JLabel("Todo lo que necesitas saber para usar FlowTrack");
+        subtitleLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+        subtitleLabel.setForeground(UIUtils.TEXT_MUTED);
+        subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        headerPanel.add(subtitleLabel, BorderLayout.CENTER);
 
-        tabs.addTab("Inicio", createTab(
+        // Contenido con CardLayout
+        CardLayout cardLayout = new CardLayout();
+        JPanel contentPanel = new JPanel(cardLayout);
+        contentPanel.setBackground(UIUtils.BG);
+
+        String[] keys    = {"INICIO", "TRANSACCIONES", "DEUDAS", "OBJETIVOS", "ESTADISTICAS"};
+        String[] labels  = {"Inicio", "Transacciones", "Deudas", "Objetivos", "Estadísticas"};
+
+        contentPanel.add(createTab(
             "Inicio — Resumen del mes actual",
             "La pantalla de Inicio muestra un resumen de tu situación financiera en el mes en curso.\n\n" +
             "PANEL SUPERIOR\n" +
@@ -37,9 +55,9 @@ public class GuiaView extends JPanel {
             "PANEL DERECHO\n" +
             "  • Muestra el gasto del mes desglosado por categoría.\n\n" +
             "Toda la información se actualiza automáticamente al registrar cualquier dato nuevo."
-        ));
+        ), "INICIO");
 
-        tabs.addTab("Transacciones", createTab(
+        contentPanel.add(createTab(
             "Transacciones — Registrar movimientos",
             "Desde esta sección puedes registrar tres tipos de movimientos económicos.\n\n" +
             "INGRESOS\n" +
@@ -56,9 +74,9 @@ public class GuiaView extends JPanel {
             "  • El usuario debe existir en la aplicación para que la transferencia se procese.\n" +
             "  • Añade un asunto y la cantidad.\n\n" +
             "Al registrar cualquier movimiento, el Inicio se actualiza de forma inmediata."
-        ));
+        ), "TRANSACCIONES");
 
-        tabs.addTab("Deudas", createTab(
+        contentPanel.add(createTab(
             "Deudas — Gestionar deudas pendientes",
             "Esta sección permite llevar un control detallado de tus deudas.\n\n" +
             "AL REGISTRAR UNA DEUDA debes indicar:\n" +
@@ -73,9 +91,9 @@ public class GuiaView extends JPanel {
             "El historial completo de deudas está disponible en la sección Estadísticas.\n\n" +
             "Consejo: actualiza el monto pendiente y el estado conforme vayas\n" +
             "pagando la deuda para mantener los datos al día."
-        ));
+        ), "DEUDAS");
 
-        tabs.addTab("Objetivos", createTab(
+        contentPanel.add(createTab(
             "Objetivos — Planificar metas de ahorro",
             "La sección de Objetivos te ayuda a definir y hacer seguimiento de tus metas financieras.\n\n" +
             "AL CREAR UN OBJETIVO debes indicar:\n" +
@@ -88,15 +106,16 @@ public class GuiaView extends JPanel {
             "tenerlos siempre visibles sin necesidad de entrar aquí.\n\n" +
             "El historial completo de objetivos, incluyendo los Cumplidos,\n" +
             "está disponible en la sección Estadísticas."
-        ));
+        ), "OBJETIVOS");
 
-        tabs.addTab("Estadísticas", createTab(
+        contentPanel.add(createTab(
             "Estadísticas — Visión global acumulada",
             "La pantalla de Estadísticas ofrece una visión completa de todas tus finanzas\n" +
             "sin filtro de fecha, desde que empezaste a usar la aplicación.\n\n" +
             "RESUMEN\n" +
             "  • Ingresos totales: suma de todos los ingresos registrados.\n" +
-            "  • Gastos totales: suma de todos los gastos acumulados.\n\n" +
+            "  • Gastos totales: suma de todos los gastos acumulados.\n" +
+            "  • Beneficio Neto: diferencia entre ambos totales.\n\n" +
             "HISTORIAL COMPLETO\n" +
             "  • Transferencias: todas las transferencias en las que has participado.\n" +
             "  • Deudas: lista completa con estado actual de cada deuda.\n" +
@@ -104,18 +123,79 @@ public class GuiaView extends JPanel {
             "A diferencia del Inicio, que muestra solo el mes en curso, Estadísticas\n" +
             "acumula el historial total desde el primer uso de la aplicación.\n\n" +
             "Los datos se actualizan automáticamente al registrar cualquier movimiento."
-        ));
+        ), "ESTADISTICAS");
 
-        add(tabs, BorderLayout.CENTER);
+        // Barra de pestañas de ancho completo
+        JPanel tabBar = new JPanel(new GridLayout(1, 5, 0, 0));
+        tabBar.setBackground(UIUtils.BG_CARD);
+        tabBar.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, UIUtils.BORDER));
+
+        JButton[] tabBtns = new JButton[5];
+        for (int i = 0; i < 5; i++) {
+            tabBtns[i] = crearTabBoton(labels[i]);
+            final int idx = i;
+            tabBtns[i].addActionListener(e -> {
+                cardLayout.show(contentPanel, keys[idx]);
+                for (JButton b : tabBtns) activarTab(b, false);
+                activarTab(tabBtns[idx], true);
+            });
+            tabBar.add(tabBtns[i]);
+        }
+        activarTab(tabBtns[0], true);
+
+        JPanel northWrapper = new JPanel(new BorderLayout());
+        northWrapper.setBackground(UIUtils.BG_CARD);
+        northWrapper.add(headerPanel, BorderLayout.NORTH);
+        northWrapper.add(tabBar, BorderLayout.SOUTH);
+
+        add(northWrapper, BorderLayout.NORTH);
+        add(contentPanel, BorderLayout.CENTER);
+    }
+
+    private JButton crearTabBoton(String texto) {
+        JButton btn = new JButton(texto);
+        btn.setFont(new Font("Arial", Font.BOLD, 13));
+        btn.setForeground(UIUtils.TEXT_MUTED);
+        btn.setBackground(UIUtils.BG_CARD);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setContentAreaFilled(true);
+        btn.setOpaque(true);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(0, 40));
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) {
+                if (!UIUtils.ACCENT.equals(btn.getForeground()))
+                    btn.setBackground(UIUtils.BG);
+            }
+            @Override public void mouseExited(java.awt.event.MouseEvent e) {
+                if (!UIUtils.ACCENT.equals(btn.getForeground()))
+                    btn.setBackground(UIUtils.BG_CARD);
+            }
+        });
+        return btn;
+    }
+
+    private void activarTab(JButton btn, boolean activo) {
+        if (activo) {
+            btn.setForeground(UIUtils.ACCENT);
+            btn.setBackground(UIUtils.BG_CARD);
+            btn.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, UIUtils.ACCENT));
+        } else {
+            btn.setForeground(UIUtils.TEXT_MUTED);
+            btn.setBackground(UIUtils.BG_CARD);
+            btn.setBorder(null);
+        }
     }
 
     private JScrollPane createTab(String titulo, String contenido) {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(UIUtils.BG_CARD);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         JLabel lblTitulo = new JLabel(titulo);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 15));
+        lblTitulo.setForeground(UIUtils.TEXT);
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 12, 0));
         panel.add(lblTitulo, BorderLayout.NORTH);
 
@@ -124,8 +204,8 @@ public class GuiaView extends JPanel {
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         textArea.setEditable(false);
-        textArea.setBackground(Color.WHITE);
-        textArea.setForeground(new Color(40, 40, 40));
+        textArea.setBackground(UIUtils.BG_CARD);
+        textArea.setForeground(UIUtils.TEXT);
         textArea.setBorder(null);
         panel.add(textArea, BorderLayout.CENTER);
 

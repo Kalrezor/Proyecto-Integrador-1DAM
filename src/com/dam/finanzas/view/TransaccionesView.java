@@ -23,28 +23,109 @@ public class TransaccionesView extends JPanel {
 
     private void initialize() {
         setLayout(new BorderLayout());
-        setBackground(new Color(240, 240, 240));
+        setBackground(UIUtils.BG);
 
-        JPanel titlePanel = new JPanel(new BorderLayout());
-        titlePanel.setBackground(new Color(200, 200, 200));
+        // Cabecera estilo home
+        JPanel headerPanel = new JPanel(new BorderLayout(0, 2));
+        headerPanel.setBackground(UIUtils.BG_CARD);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtils.BORDER),
+            BorderFactory.createEmptyBorder(10, 16, 10, 16)));
 
-        JLabel titleLabel = new JLabel("GESTIÓN DE TRANSACCIONES", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        titlePanel.add(titleLabel);
-        add(titlePanel, BorderLayout.NORTH);
+        JLabel titleLabel = new JLabel("Gestión de Transacciones");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setForeground(UIUtils.TEXT);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        headerPanel.add(titleLabel, BorderLayout.NORTH);
 
-        JTabbedPane transaccionesTabs = new JTabbedPane();
-        transaccionesTabs.addTab("Ingresos", createIngresosPanel());
-        transaccionesTabs.addTab("Gastos", createGastosPanel());
-        transaccionesTabs.addTab("Transferencias", createTransferenciasPanel());
-        add(transaccionesTabs, BorderLayout.CENTER);
+        JLabel subtitleLabel = new JLabel("Registra tus ingresos, gastos y transferencias");
+        subtitleLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+        subtitleLabel.setForeground(UIUtils.TEXT_MUTED);
+        subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        headerPanel.add(subtitleLabel, BorderLayout.CENTER);
+
+        add(headerPanel, BorderLayout.NORTH);
+
+        // Panel de contenido con CardLayout
+        CardLayout cardLayout = new CardLayout();
+        JPanel contentPanel = new JPanel(cardLayout);
+        contentPanel.setBackground(UIUtils.BG);
+        contentPanel.add(createIngresosPanel(), "INGRESOS");
+        contentPanel.add(createGastosPanel(), "GASTOS");
+        contentPanel.add(createTransferenciasPanel(), "TRANSFERENCIAS");
+
+        // Barra de botones de ancho completo
+        JPanel tabBar = new JPanel(new GridLayout(1, 3, 0, 0));
+        tabBar.setBackground(UIUtils.BG_CARD);
+        tabBar.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, UIUtils.BORDER));
+
+        JButton btnIngresos     = crearTabBoton("Ingresos");
+        JButton btnGastos       = crearTabBoton("Gastos");
+        JButton btnTransfer     = crearTabBoton("Transferencias");
+
+        JButton[] tabs = {btnIngresos, btnGastos, btnTransfer};
+        String[]  keys = {"INGRESOS", "GASTOS", "TRANSFERENCIAS"};
+
+        for (int i = 0; i < tabs.length; i++) {
+            final int idx = i;
+            tabs[i].addActionListener(e -> {
+                cardLayout.show(contentPanel, keys[idx]);
+                for (JButton t : tabs) activarTab(t, false);
+                activarTab(tabs[idx], true);
+            });
+            tabBar.add(tabs[i]);
+        }
+        activarTab(btnIngresos, true);
+
+        JPanel northWrapper = new JPanel(new BorderLayout());
+        northWrapper.setBackground(UIUtils.BG_CARD);
+        northWrapper.add(headerPanel, BorderLayout.NORTH);
+        northWrapper.add(tabBar, BorderLayout.SOUTH);
+
+        add(northWrapper, BorderLayout.NORTH);
+        add(contentPanel, BorderLayout.CENTER);
+    }
+
+    private JButton crearTabBoton(String texto) {
+        JButton btn = new JButton(texto);
+        btn.setFont(new Font("Arial", Font.BOLD, 13));
+        btn.setForeground(UIUtils.TEXT_MUTED);
+        btn.setBackground(UIUtils.BG_CARD);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setContentAreaFilled(true);
+        btn.setOpaque(true);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(0, 40));
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) {
+                if (!UIUtils.ACCENT.equals(btn.getForeground()))
+                    btn.setBackground(UIUtils.BG);
+            }
+            @Override public void mouseExited(java.awt.event.MouseEvent e) {
+                if (!UIUtils.ACCENT.equals(btn.getForeground()))
+                    btn.setBackground(UIUtils.BG_CARD);
+            }
+        });
+        return btn;
+    }
+
+    private void activarTab(JButton btn, boolean activo) {
+        if (activo) {
+            btn.setForeground(UIUtils.ACCENT);
+            btn.setBackground(UIUtils.BG_CARD);
+            btn.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, UIUtils.ACCENT));
+        } else {
+            btn.setForeground(UIUtils.TEXT_MUTED);
+            btn.setBackground(UIUtils.BG_CARD);
+            btn.setBorder(null);
+        }
     }
 
     private JPanel createIngresosPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        panel.setBackground(new Color(240, 240, 240));
+        panel.setBackground(UIUtils.BG);
 
         GridBagConstraints gbcLabel = new GridBagConstraints();
         gbcLabel.insets = new Insets(15, 15, 15, 15);
@@ -79,7 +160,7 @@ public class TransaccionesView extends JPanel {
         gbcButton.gridwidth = 2;
         gbcButton.anchor = GridBagConstraints.CENTER;
         gbcButton.insets = new Insets(25, 15, 15, 15);
-        JButton registrarButton = new JButton("Registrar");
+        JButton registrarButton = UIUtils.crearBoton("Registrar Ingreso", UIUtils.SUCCESS, Color.WHITE);
         registrarButton.addActionListener(e -> {
             try {
                 double cantidad = Double.parseDouble(cantidadField.getText());
@@ -113,7 +194,7 @@ public class TransaccionesView extends JPanel {
     private JPanel createGastosPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        panel.setBackground(new Color(240, 240, 240));
+        panel.setBackground(UIUtils.BG);
 
         GridBagConstraints gbcLabel = new GridBagConstraints();
         gbcLabel.insets = new Insets(15, 15, 15, 15);
@@ -167,7 +248,7 @@ public class TransaccionesView extends JPanel {
         gbcButton.gridwidth = 2;
         gbcButton.anchor = GridBagConstraints.CENTER;
         gbcButton.insets = new Insets(25, 15, 15, 15);
-        JButton registrarButton = new JButton("Registrar");
+        JButton registrarButton = UIUtils.crearBoton("Registrar Gasto", UIUtils.DANGER, Color.WHITE);
         registrarButton.addActionListener(e -> {
             try {
                 double cantidad = Double.parseDouble(cantidadField.getText());
@@ -207,7 +288,7 @@ public class TransaccionesView extends JPanel {
     private JPanel createTransferenciasPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        panel.setBackground(new Color(240, 240, 240));
+        panel.setBackground(UIUtils.BG);
 
         GridBagConstraints gbcLabel = new GridBagConstraints();
         gbcLabel.insets = new Insets(15, 15, 15, 15);
@@ -261,7 +342,7 @@ public class TransaccionesView extends JPanel {
         gbcButton.gridwidth = 2;
         gbcButton.anchor = GridBagConstraints.CENTER;
         gbcButton.insets = new Insets(25, 15, 15, 15);
-        JButton registrarButton = new JButton("Registrar");
+        JButton registrarButton = UIUtils.crearBoton("Registrar Transferencia", UIUtils.ACCENT, Color.WHITE);
         registrarButton.addActionListener(e -> {
             String nombreOtroUsuario = destinatarioField.getText().trim();
             String asunto = asuntoField.getText();

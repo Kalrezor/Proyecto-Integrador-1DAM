@@ -25,37 +25,48 @@ public class EstadisticasView extends JPanel {
     private JTable transferenciasTable;
     private JLabel ingresosValueLabel;
     private JLabel gastosValueLabel;
+    private JLabel beneficioNetoValueLabel;
 
     public EstadisticasView(int idUsuarioActual, MainView mainView) {
         this.idUsuarioActual = idUsuarioActual;
         this.mainView = mainView;
         setLayout(new BorderLayout());
-        setBackground(Color.LIGHT_GRAY);
+        setBackground(UIUtils.BG);
         initialize();
     }
 
     private void initialize() {
+        JPanel headerPanel = new JPanel(new BorderLayout(0, 2));
+        headerPanel.setBackground(UIUtils.BG_CARD);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, UIUtils.BORDER),
+            BorderFactory.createEmptyBorder(10, 16, 10, 16)));
         JLabel titleLabel = new JLabel("Estadísticas Financieras");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setForeground(UIUtils.TEXT);
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        add(titleLabel, BorderLayout.NORTH);
+        headerPanel.add(titleLabel, BorderLayout.NORTH);
+        JLabel subtitleLabel = new JLabel("Visión global acumulada de tus finanzas");
+        subtitleLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+        subtitleLabel.setForeground(UIUtils.TEXT_MUTED);
+        subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        headerPanel.add(subtitleLabel, BorderLayout.CENTER);
 
         JPanel estadisticasContainerPanel = new JPanel(new BorderLayout());
-        estadisticasContainerPanel.setBackground(Color.LIGHT_GRAY);
-
-        JLabel estadisticasLabel = new JLabel("Estadísticas");
-        estadisticasLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        estadisticasLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        estadisticasContainerPanel.add(estadisticasLabel, BorderLayout.NORTH);
+        estadisticasContainerPanel.setBackground(UIUtils.BG);
 
         JPanel finanzasPanel = createFinanzasPanel();
         estadisticasContainerPanel.add(finanzasPanel, BorderLayout.CENTER);
 
-        add(estadisticasContainerPanel, BorderLayout.NORTH);
+        JPanel northWrapper = new JPanel(new BorderLayout());
+        northWrapper.setBackground(UIUtils.BG);
+        northWrapper.add(headerPanel, BorderLayout.NORTH);
+        northWrapper.add(estadisticasContainerPanel, BorderLayout.CENTER);
+        add(northWrapper, BorderLayout.NORTH);
 
         JPanel tablesPanel = new JPanel(new GridLayout(3, 1, 10, 10));
-        tablesPanel.setBackground(Color.LIGHT_GRAY);
-        tablesPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        tablesPanel.setBackground(UIUtils.BG);
+        tablesPanel.setBorder(BorderFactory.createEmptyBorder(12, 16, 16, 16));
 
         JPanel transferenciasPanel = createTransferenciasPanel();
         tablesPanel.add(transferenciasPanel);
@@ -94,13 +105,18 @@ public class EstadisticasView extends JPanel {
         TablaGastos tablaGastos = new TablaGastos();
         double totalGastos = tablaGastos.obtenerTotalGastos(idUsuarioActual);
 
+        double beneficioNeto = totalIngresos - totalGastos;
+
         ingresosValueLabel.setText(String.format("%.2f €", totalIngresos));
         gastosValueLabel.setText(String.format("%.2f €", totalGastos));
+        beneficioNetoValueLabel.setText(String.format("%.2f €", beneficioNeto));
     }
 
     private JPanel createObjetivosPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Objetivos"));
+        panel.setBackground(UIUtils.BG);
+        panel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(UIUtils.BORDER), "Objetivos"));
 
         String[] objetivosColumnNames = {"Descripción", "Costo Total", "Ahorro Mensual Sugerido", "Tiempo Necesario", "Estado"};
         objetivosTableModel = new DefaultTableModel(objetivosColumnNames, 0);
@@ -112,6 +128,7 @@ public class EstadisticasView extends JPanel {
         objetivosTable.getTableHeader().setResizingAllowed(false);
         objetivosTable.setRowHeight(22);
         objetivosTable.setFillsViewportHeight(true);
+        UIUtils.estilizarTabla(objetivosTable);
 
         JScrollPane objetivosScrollPane = new JScrollPane(objetivosTable);
         panel.add(objetivosScrollPane, BorderLayout.CENTER);
@@ -122,40 +139,73 @@ public class EstadisticasView extends JPanel {
     }
 
     private JPanel createFinanzasPanel() {
-        JPanel finanzasPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-        finanzasPanel.setBackground(new Color(192, 192, 192));
+        JPanel finanzasPanel = new JPanel(new GridLayout(1, 3, 12, 0));
+        finanzasPanel.setBackground(UIUtils.BG);
+        finanzasPanel.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
 
+        // Ingresos card
         JPanel ingresosPanel = new JPanel(new BorderLayout());
-        ingresosPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        JLabel ingresosLabel = new JLabel("Ingresos");
-        ingresosLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        ingresosPanel.setBackground(UIUtils.BG_SUCCESS);
+        ingresosPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(UIUtils.SUCCESS, 1),
+            BorderFactory.createEmptyBorder(8, 12, 8, 12)));
+        JLabel ingresosLabel = new JLabel("Ingresos Totales");
+        ingresosLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        ingresosLabel.setForeground(UIUtils.SUCCESS);
         ingresosLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        ingresosValueLabel = new JLabel("0 €");
-        ingresosValueLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        ingresosValueLabel = new JLabel("0,00 €");
+        ingresosValueLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        ingresosValueLabel.setForeground(UIUtils.SUCCESS);
         ingresosValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
         ingresosPanel.add(ingresosLabel, BorderLayout.NORTH);
         ingresosPanel.add(ingresosValueLabel, BorderLayout.CENTER);
 
+        // Gastos card
         JPanel gastosPanel = new JPanel(new BorderLayout());
-        gastosPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        JLabel gastosLabel = new JLabel("Gastos");
-        gastosLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        gastosPanel.setBackground(UIUtils.BG_DANGER);
+        gastosPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(UIUtils.DANGER, 1),
+            BorderFactory.createEmptyBorder(8, 12, 8, 12)));
+        JLabel gastosLabel = new JLabel("Gastos Totales");
+        gastosLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        gastosLabel.setForeground(UIUtils.DANGER);
         gastosLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        gastosValueLabel = new JLabel("0 €");
-        gastosValueLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        gastosValueLabel = new JLabel("0,00 €");
+        gastosValueLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        gastosValueLabel.setForeground(UIUtils.DANGER);
         gastosValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
         gastosPanel.add(gastosLabel, BorderLayout.NORTH);
         gastosPanel.add(gastosValueLabel, BorderLayout.CENTER);
 
+        // Beneficio Neto card
+        JPanel beneficioPanel = new JPanel(new BorderLayout());
+        beneficioPanel.setBackground(UIUtils.BG_ACCENT);
+        beneficioPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(UIUtils.ACCENT, 1),
+            BorderFactory.createEmptyBorder(8, 12, 8, 12)));
+        JLabel beneficioLabel = new JLabel("Beneficio Neto");
+        beneficioLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        beneficioLabel.setForeground(UIUtils.ACCENT);
+        beneficioLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        beneficioNetoValueLabel = new JLabel("0,00 €");
+        beneficioNetoValueLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        beneficioNetoValueLabel.setForeground(UIUtils.ACCENT);
+        beneficioNetoValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        beneficioPanel.add(beneficioLabel, BorderLayout.NORTH);
+        beneficioPanel.add(beneficioNetoValueLabel, BorderLayout.CENTER);
+
         finanzasPanel.add(ingresosPanel);
         finanzasPanel.add(gastosPanel);
+        finanzasPanel.add(beneficioPanel);
 
         return finanzasPanel;
     }
 
     private JPanel createTransferenciasPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Transferencias"));
+        panel.setBackground(UIUtils.BG);
+        panel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(UIUtils.BORDER), "Transferencias"));
 
         String[] transferenciasColumnNames = {"Remitente", "Destinatario", "Monto"};
         transferenciasTableModel = new DefaultTableModel(transferenciasColumnNames, 0);
@@ -167,6 +217,7 @@ public class EstadisticasView extends JPanel {
         transferenciasTable.getTableHeader().setResizingAllowed(false);
         transferenciasTable.setRowHeight(22);
         transferenciasTable.setFillsViewportHeight(true);
+        UIUtils.estilizarTabla(transferenciasTable);
 
         JScrollPane transferenciasScrollPane = new JScrollPane(transferenciasTable);
         panel.add(transferenciasScrollPane, BorderLayout.CENTER);
@@ -178,7 +229,9 @@ public class EstadisticasView extends JPanel {
 
     private JPanel createDeudasPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Deudas"));
+        panel.setBackground(UIUtils.BG);
+        panel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(UIUtils.BORDER), "Deudas"));
 
         String[] deudasColumnNames = {"Descripción", "Monto Total", "Monto Pendiente", "Fecha Vencimiento", "Estado"};
         deudasTableModel = new DefaultTableModel(deudasColumnNames, 0);
@@ -190,6 +243,7 @@ public class EstadisticasView extends JPanel {
         deudasTable.getTableHeader().setResizingAllowed(false);
         deudasTable.setRowHeight(22);
         deudasTable.setFillsViewportHeight(true);
+        UIUtils.estilizarTabla(deudasTable);
         JScrollPane deudasScrollPane = new JScrollPane(deudasTable);
         panel.add(deudasScrollPane, BorderLayout.CENTER);
 
@@ -218,7 +272,9 @@ public class EstadisticasView extends JPanel {
         transferenciasTableModel.setRowCount(0);
         TablaTransferencia tablaTransferencia = new TablaTransferencia();
         for (Object[] fila : tablaTransferencia.obtenerTransferencias(idUsuarioActual)) {
-            transferenciasTableModel.addRow(fila);
+            transferenciasTableModel.addRow(new Object[]{
+                fila[0], fila[1], String.format("%.2f €", ((Number) fila[2]).doubleValue())
+            });
         }
         UIUtils.ajustarTabla(transferenciasTable);
     }

@@ -22,36 +22,48 @@ public class LoginView extends JFrame {
 
     private void initComponents() {
         JPanel contentPane = new JPanel(new GridBagLayout());
-        contentPane.setBackground(new Color(44, 62, 80));
+        contentPane.setBackground(UIUtils.SIDEBAR);
         contentPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JPanel loginPanel = new JPanel(new GridBagLayout());
-        loginPanel.setBackground(new Color(52, 152, 219));
+        loginPanel.setBackground(UIUtils.BG_CARD);
         loginPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(41, 128, 185), 2),
-                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+                BorderFactory.createLineBorder(UIUtils.BORDER, 1),
+                BorderFactory.createEmptyBorder(24, 30, 24, 30)));
 
         JLabel lblIconoUsuario = new JLabel("👤");
         lblIconoUsuario.setHorizontalAlignment(SwingConstants.CENTER);
         lblIconoUsuario.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
-        lblIconoUsuario.setForeground(Color.WHITE);
+        lblIconoUsuario.setForeground(UIUtils.ACCENT);
         GridBagConstraints gbcIconoUsuario = new GridBagConstraints();
         gbcIconoUsuario.gridx = 0;
         gbcIconoUsuario.gridy = 0;
         gbcIconoUsuario.gridwidth = 2;
         gbcIconoUsuario.anchor = GridBagConstraints.CENTER;
-        gbcIconoUsuario.insets = new Insets(10, 10, 10, 10);
+        gbcIconoUsuario.insets = new Insets(0, 10, 0, 10);
         loginPanel.add(lblIconoUsuario, gbcIconoUsuario);
+
+        JLabel lblTitulo = new JLabel("FlowTrack");
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
+        lblTitulo.setForeground(UIUtils.TEXT);
+        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        GridBagConstraints gbcTitulo = new GridBagConstraints();
+        gbcTitulo.gridx = 0;
+        gbcTitulo.gridy = 1;
+        gbcTitulo.gridwidth = 2;
+        gbcTitulo.anchor = GridBagConstraints.CENTER;
+        gbcTitulo.insets = new Insets(0, 10, 14, 10);
+        loginPanel.add(lblTitulo, gbcTitulo);
 
         txtCorreo = new JTextField("Correo", 20);
         txtCorreo.setForeground(Color.GRAY);
         txtCorreo.setFont(new Font("Tahoma", Font.PLAIN, 14));
         GridBagConstraints gbcCorreo = new GridBagConstraints();
         gbcCorreo.gridx = 0;
-        gbcCorreo.gridy = 1;
+        gbcCorreo.gridy = 2;
         gbcCorreo.gridwidth = 2;
         gbcCorreo.fill = GridBagConstraints.HORIZONTAL;
-        gbcCorreo.insets = new Insets(10, 10, 10, 10);
+        gbcCorreo.insets = new Insets(10, 10, 6, 10);
         loginPanel.add(txtCorreo, gbcCorreo);
 
         txtCorreo.addFocusListener(new FocusListener() {
@@ -78,10 +90,10 @@ public class LoginView extends JFrame {
         txtContraseña.setFont(new Font("Tahoma", Font.PLAIN, 14));
         GridBagConstraints gbcContraseña = new GridBagConstraints();
         gbcContraseña.gridx = 0;
-        gbcContraseña.gridy = 2;
+        gbcContraseña.gridy = 3;
         gbcContraseña.gridwidth = 2;
         gbcContraseña.fill = GridBagConstraints.HORIZONTAL;
-        gbcContraseña.insets = new Insets(10, 10, 10, 10);
+        gbcContraseña.insets = new Insets(6, 10, 10, 10);
         loginPanel.add(txtContraseña, gbcContraseña);
 
         txtContraseña.addFocusListener(new FocusListener() {
@@ -104,26 +116,20 @@ public class LoginView extends JFrame {
             }
         });
 
-        btnIniciarSesion = new JButton("Iniciar Sesión");
-        btnIniciarSesion.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        btnIniciarSesion.setBackground(new Color(44, 62, 80));
-        btnIniciarSesion.setForeground(Color.WHITE);
+        btnIniciarSesion = UIUtils.crearBoton("Iniciar Sesión", UIUtils.ACCENT, Color.WHITE);
         GridBagConstraints gbcIniciarSesion = new GridBagConstraints();
         gbcIniciarSesion.gridx = 0;
-        gbcIniciarSesion.gridy = 3;
+        gbcIniciarSesion.gridy = 4;
         gbcIniciarSesion.anchor = GridBagConstraints.CENTER;
-        gbcIniciarSesion.insets = new Insets(10, 10, 10, 10);
+        gbcIniciarSesion.insets = new Insets(14, 10, 10, 6);
         loginPanel.add(btnIniciarSesion, gbcIniciarSesion);
 
-        btnCrearCuenta = new JButton("Crear Cuenta");
-        btnCrearCuenta.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        btnCrearCuenta.setBackground(new Color(44, 62, 80));
-        btnCrearCuenta.setForeground(Color.WHITE);
+        btnCrearCuenta = UIUtils.crearBoton("Crear Cuenta", UIUtils.SIDEBAR, Color.WHITE);
         GridBagConstraints gbcCrearCuenta = new GridBagConstraints();
         gbcCrearCuenta.gridx = 1;
-        gbcCrearCuenta.gridy = 3;
+        gbcCrearCuenta.gridy = 4;
         gbcCrearCuenta.anchor = GridBagConstraints.CENTER;
-        gbcCrearCuenta.insets = new Insets(10, 10, 10, 10);
+        gbcCrearCuenta.insets = new Insets(14, 6, 10, 10);
         loginPanel.add(btnCrearCuenta, gbcCrearCuenta);
 
         GridBagConstraints gbcLoginPanel = new GridBagConstraints();

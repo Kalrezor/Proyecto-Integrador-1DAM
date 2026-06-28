@@ -26,36 +26,48 @@ public class RegisterView extends JFrame {
 
     private void initComponents() {
         JPanel contentPane = new JPanel(new GridBagLayout());
-        contentPane.setBackground(new Color(44, 62, 80));
+        contentPane.setBackground(UIUtils.SIDEBAR);
         contentPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JPanel registerPanel = new JPanel(new GridBagLayout());
-        registerPanel.setBackground(new Color(52, 152, 219));
+        registerPanel.setBackground(UIUtils.BG_CARD);
         registerPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(41, 128, 185), 2),
-                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+                BorderFactory.createLineBorder(UIUtils.BORDER, 1),
+                BorderFactory.createEmptyBorder(20, 30, 20, 30)));
 
         JLabel lblIconoUsuario = new JLabel("👤");
         lblIconoUsuario.setHorizontalAlignment(SwingConstants.CENTER);
-        lblIconoUsuario.setFont(new Font("Arial", Font.BOLD, 48));
-        lblIconoUsuario.setForeground(Color.WHITE);
+        lblIconoUsuario.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 40));
+        lblIconoUsuario.setForeground(UIUtils.ACCENT);
         GridBagConstraints gbcIconoUsuario = new GridBagConstraints();
         gbcIconoUsuario.gridx = 0;
         gbcIconoUsuario.gridy = 0;
         gbcIconoUsuario.gridwidth = 2;
         gbcIconoUsuario.anchor = GridBagConstraints.CENTER;
-        gbcIconoUsuario.insets = new Insets(10, 10, 10, 10);
+        gbcIconoUsuario.insets = new Insets(0, 10, 0, 10);
         registerPanel.add(lblIconoUsuario, gbcIconoUsuario);
+
+        JLabel lblTitulo = new JLabel("Crear cuenta");
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 20));
+        lblTitulo.setForeground(UIUtils.TEXT);
+        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        GridBagConstraints gbcTitulo = new GridBagConstraints();
+        gbcTitulo.gridx = 0;
+        gbcTitulo.gridy = 1;
+        gbcTitulo.gridwidth = 2;
+        gbcTitulo.anchor = GridBagConstraints.CENTER;
+        gbcTitulo.insets = new Insets(2, 10, 12, 10);
+        registerPanel.add(lblTitulo, gbcTitulo);
 
         txtUsuario = new JTextField("Usuario", 20);
         txtUsuario.setForeground(Color.GRAY);
         txtUsuario.setFont(new Font("Tahoma", Font.PLAIN, 14));
         GridBagConstraints gbcUsuario = new GridBagConstraints();
         gbcUsuario.gridx = 0;
-        gbcUsuario.gridy = 1;
+        gbcUsuario.gridy = 2;
         gbcUsuario.gridwidth = 2;
         gbcUsuario.fill = GridBagConstraints.HORIZONTAL;
-        gbcUsuario.insets = new Insets(10, 10, 10, 10);
+        gbcUsuario.insets = new Insets(8, 10, 6, 10);
         registerPanel.add(txtUsuario, gbcUsuario);
 
         txtUsuario.addFocusListener(new FocusListener() {
@@ -81,10 +93,10 @@ public class RegisterView extends JFrame {
         txtEmail.setFont(new Font("Tahoma", Font.PLAIN, 14));
         GridBagConstraints gbcEmail = new GridBagConstraints();
         gbcEmail.gridx = 0;
-        gbcEmail.gridy = 2;
+        gbcEmail.gridy = 3;
         gbcEmail.gridwidth = 2;
         gbcEmail.fill = GridBagConstraints.HORIZONTAL;
-        gbcEmail.insets = new Insets(10, 10, 10, 10);
+        gbcEmail.insets = new Insets(6, 10, 6, 10);
         registerPanel.add(txtEmail, gbcEmail);
 
         txtEmail.addFocusListener(new FocusListener() {
@@ -111,10 +123,10 @@ public class RegisterView extends JFrame {
         txtContraseña.setFont(new Font("Tahoma", Font.PLAIN, 14));
         GridBagConstraints gbcContraseña = new GridBagConstraints();
         gbcContraseña.gridx = 0;
-        gbcContraseña.gridy = 3;
+        gbcContraseña.gridy = 4;
         gbcContraseña.gridwidth = 2;
         gbcContraseña.fill = GridBagConstraints.HORIZONTAL;
-        gbcContraseña.insets = new Insets(10, 10, 10, 10);
+        gbcContraseña.insets = new Insets(6, 10, 6, 10);
         registerPanel.add(txtContraseña, gbcContraseña);
 
         txtContraseña.addFocusListener(new FocusListener() {
@@ -143,10 +155,10 @@ public class RegisterView extends JFrame {
         txtRepetirContraseña.setFont(new Font("Tahoma", Font.PLAIN, 14));
         GridBagConstraints gbcRepetirContraseña = new GridBagConstraints();
         gbcRepetirContraseña.gridx = 0;
-        gbcRepetirContraseña.gridy = 4;
+        gbcRepetirContraseña.gridy = 5;
         gbcRepetirContraseña.gridwidth = 2;
         gbcRepetirContraseña.fill = GridBagConstraints.HORIZONTAL;
-        gbcRepetirContraseña.insets = new Insets(10, 10, 10, 10);
+        gbcRepetirContraseña.insets = new Insets(6, 10, 10, 10);
         registerPanel.add(txtRepetirContraseña, gbcRepetirContraseña);
 
         txtRepetirContraseña.addFocusListener(new FocusListener() {
@@ -169,27 +181,21 @@ public class RegisterView extends JFrame {
             }
         });
 
-        btnCrearCuenta = new JButton("Crear Cuenta");
-        btnCrearCuenta.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        btnCrearCuenta.setBackground(new Color(44, 62, 80));
-        btnCrearCuenta.setForeground(Color.WHITE);
+        btnCrearCuenta = UIUtils.crearBoton("Crear Cuenta", UIUtils.ACCENT, Color.WHITE);
         GridBagConstraints gbcCrearCuenta = new GridBagConstraints();
         gbcCrearCuenta.gridx = 0;
-        gbcCrearCuenta.gridy = 5;
+        gbcCrearCuenta.gridy = 6;
         gbcCrearCuenta.gridwidth = 1;
         gbcCrearCuenta.anchor = GridBagConstraints.CENTER;
-        gbcCrearCuenta.insets = new Insets(10, 10, 10, 10);
+        gbcCrearCuenta.insets = new Insets(12, 10, 8, 6);
         registerPanel.add(btnCrearCuenta, gbcCrearCuenta);
 
-        btnVolverLogin = new JButton("Volver a Login");
-        btnVolverLogin.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        btnVolverLogin.setBackground(new Color(44, 62, 80));
-        btnVolverLogin.setForeground(Color.WHITE);
+        btnVolverLogin = UIUtils.crearBoton("Volver a Login", UIUtils.SIDEBAR, Color.WHITE);
         GridBagConstraints gbcVolverLogin = new GridBagConstraints();
         gbcVolverLogin.gridx = 1;
-        gbcVolverLogin.gridy = 5;
+        gbcVolverLogin.gridy = 6;
         gbcVolverLogin.anchor = GridBagConstraints.CENTER;
-        gbcVolverLogin.insets = new Insets(10, 10, 10, 10);
+        gbcVolverLogin.insets = new Insets(12, 6, 8, 10);
         registerPanel.add(btnVolverLogin, gbcVolverLogin);
 
         btnVolverLogin.addActionListener(new ActionListener() {
