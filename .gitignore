@@ -15,9 +15,6 @@ bin/
 # VS Code
 .vscode/
 
-# Base de datos local (no versionar datos de desarrollo)
-BBDD/*.db
-
 # OS
 .DS_Store
 Thumbs.db
