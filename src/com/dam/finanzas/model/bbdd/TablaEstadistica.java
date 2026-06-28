@@ -22,7 +22,7 @@ public class TablaEstadistica {
     static final String NOM_COL_NUM_OBJ = "numero_objetivos";
     static final String NOM_COL_FECHA = "fecha";
 
-    private ConexionBBDD conBBDD;
+    private final ConexionBBDD conBBDD;
 
     public TablaEstadistica() {
         conBBDD = new ConexionBBDD();

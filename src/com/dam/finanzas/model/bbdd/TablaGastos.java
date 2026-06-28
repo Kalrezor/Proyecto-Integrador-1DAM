@@ -19,7 +19,7 @@ public class TablaGastos {
     static final String NOM_COL_MONTO_GAS = "monto";
     static final String NOM_COL_FECHA_GAS = "fecha";
 
-    private ConexionBBDD conBBDD;
+    private final ConexionBBDD conBBDD;
 
     public TablaGastos() {
         conBBDD = new ConexionBBDD();

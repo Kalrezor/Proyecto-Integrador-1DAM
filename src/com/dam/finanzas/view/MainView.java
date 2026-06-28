@@ -27,8 +27,8 @@ public class MainView extends JFrame {
     private JPanel sidebar;
     private CardLayout cardLayout;
     private JPanel contentPanel;
-    private Map<String, Double> gastosMap;
-    private int idUsuarioActual;
+    private final Map<String, Double> gastosMap;
+    private final int idUsuarioActual;
 
     private JLabel ingresosValueLabel;
     private JLabel gastosValueLabel;
@@ -89,7 +89,7 @@ public class MainView extends JFrame {
         JPanel objetivosPanel = objetivosView.createObjetivosPanel();
         contentPanel.add(objetivosPanel, "OBJETIVOS");
 
-        estadisticasView = new EstadisticasView(idUsuarioActual, this);
+        estadisticasView = new EstadisticasView(idUsuarioActual);
         contentPanel.add(estadisticasView.createEstadisticasPanel(), "ESTADISTICAS");
 
         contentPanel.add(new GuiaView(), "GUIA");

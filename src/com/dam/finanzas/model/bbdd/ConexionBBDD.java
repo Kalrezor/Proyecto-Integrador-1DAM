@@ -5,8 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConexionBBDD {
-    private String url;
-    private String driver;
+    private final String url;
+    private final String driver;
 
     public ConexionBBDD() {
         url = "jdbc:sqlite:BBDD/Prueba1PIntegrador.db";

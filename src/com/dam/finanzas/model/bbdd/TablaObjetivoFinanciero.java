@@ -20,7 +20,7 @@ public class TablaObjetivoFinanciero {
     static final String NOM_COL_TIEMPO_NECESARIO = "tiempo_necesario";
     static final String NOM_COL_ESTADO_OBJ = "estado";
 
-    private ConexionBBDD conBBDD;
+    private final ConexionBBDD conBBDD;
 
     public TablaObjetivoFinanciero() {
         conBBDD = new ConexionBBDD();

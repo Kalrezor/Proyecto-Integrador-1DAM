@@ -13,9 +13,9 @@ import com.dam.finanzas.model.bbdd.TablaUsuario;
 import com.dam.finanzas.model.SesionUsuario;
 
 public class AppControlador implements ActionListener {
-    private LoginView vlog;
+    private final LoginView vlog;
     private RegisterView vreg;
-    private TablaUsuario datos;
+    private final TablaUsuario datos;
     private int intentosFallidos = 0;
 
     public AppControlador(LoginView vlog, RegisterView vreg) {

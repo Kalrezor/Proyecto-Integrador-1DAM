@@ -1,10 +1,10 @@
 package com.dam.finanzas.model;
 
 public class Usuario {
-    private int idUsuario;
-    private String nombre;
-    private String correo;
-    private String contrasena;
+    private final int idUsuario;
+    private final String nombre;
+    private final String correo;
+    private final String contrasena;
 
     public Usuario(int idUsuario, String nombre, String correo, String contrasena) {
         this.idUsuario = idUsuario;

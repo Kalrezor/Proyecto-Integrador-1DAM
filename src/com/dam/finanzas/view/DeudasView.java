@@ -27,7 +27,7 @@ public class DeudasView extends JPanel {
     private DefaultTableModel tableModel;
     private JTable table;
     private List<Deuda> deudasList;
-    private int idUsuarioActual;
+    private final int idUsuarioActual;
 
     public DeudasView(int idUsuarioActual) {
         this.idUsuarioActual = idUsuarioActual;

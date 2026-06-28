@@ -17,7 +17,7 @@ public class TablaUsuario {
     static final String NOM_COL_EMAIL = "correo";
     static final String NOM_COL_PASW = "contraseña";
 
-    private ConexionBBDD conBBDD;
+    private final ConexionBBDD conBBDD;
 
     public TablaUsuario() {
         conBBDD = new ConexionBBDD();

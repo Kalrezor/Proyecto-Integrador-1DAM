@@ -19,7 +19,7 @@ public class TablaDeuda {
     static final String NOM_COL_DESC_DEU = "descripcion";
     static final String NOM_COL_ESTADO_DEU = "estado";
 
-    private ConexionBBDD conBBDD;
+    private final ConexionBBDD conBBDD;
 
     public TablaDeuda() {
         conBBDD = new ConexionBBDD();

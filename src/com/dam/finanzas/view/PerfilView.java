@@ -8,8 +8,8 @@ import com.dam.finanzas.model.bbdd.TablaUsuario;
 
 public class PerfilView extends JPanel {
 
-    private int idUsuarioActual;
-    private MainView mainView;
+    private final int idUsuarioActual;
+    private final MainView mainView;
     private JLabel lblNombreActual;
     private JLabel lblCorreoActual;
 

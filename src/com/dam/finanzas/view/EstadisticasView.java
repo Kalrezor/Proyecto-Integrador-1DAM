@@ -15,8 +15,7 @@ import java.awt.*;
 import java.util.List;
 
 public class EstadisticasView extends JPanel {
-    private MainView mainView;
-    private int idUsuarioActual;
+    private final int idUsuarioActual;
     private DefaultTableModel objetivosTableModel;
     private DefaultTableModel deudasTableModel;
     private DefaultTableModel transferenciasTableModel;
@@ -27,9 +26,8 @@ public class EstadisticasView extends JPanel {
     private JLabel gastosValueLabel;
     private JLabel beneficioNetoValueLabel;
 
-    public EstadisticasView(int idUsuarioActual, MainView mainView) {
+    public EstadisticasView(int idUsuarioActual) {
         this.idUsuarioActual = idUsuarioActual;
-        this.mainView = mainView;
         setLayout(new BorderLayout());
         setBackground(UIUtils.BG);
         initialize();

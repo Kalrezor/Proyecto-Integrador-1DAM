@@ -16,7 +16,7 @@ public class TablaIngresos {
     static final String NOM_COL_MONTO_ING = "monto";
     static final String NOM_COL_FECHA_ING = "fecha";
 
-    private ConexionBBDD conBBDD;
+    private final ConexionBBDD conBBDD;
 
     public TablaIngresos() {
         conBBDD = new ConexionBBDD();

@@ -18,7 +18,7 @@ public class TablaTransferencia {
     static final String NOM_COL_MONTO_TRAN = "monto";
     static final String NOM_COL_DESC_TRAN = "descripcion";
 
-    private ConexionBBDD conBBDD;
+    private final ConexionBBDD conBBDD;
 
     public TablaTransferencia() {
         conBBDD = new ConexionBBDD();

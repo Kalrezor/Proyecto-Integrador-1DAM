@@ -15,8 +15,8 @@ import com.dam.finanzas.model.Usuario;
 import java.util.List;
 
 public class TransaccionesView extends JPanel {
-    private int idUsuarioActual;
-    private MainView mainView;
+    private final int idUsuarioActual;
+    private final MainView mainView;
 
     public TransaccionesView(int idUsuarioActual, MainView mainView) {
         this.idUsuarioActual = idUsuarioActual;

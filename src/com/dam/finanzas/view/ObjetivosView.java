@@ -18,8 +18,8 @@ public class ObjetivosView extends JPanel {
     private List<ObjetivoFinanciero> objetivosList;
     private DefaultTableModel tableModel;
     private JTable table;
-    private int idUsuarioActual;
-    private TablaObjetivoFinanciero tablaObjetivoFinanciero;
+    private final int idUsuarioActual;
+    private final TablaObjetivoFinanciero tablaObjetivoFinanciero;
 
     public void setEstadisticasView(EstadisticasView estadisticasView) {
         this.estadisticasView = estadisticasView;
