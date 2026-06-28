@@ -36,8 +36,8 @@ public class GuiaView extends JPanel {
         JPanel contentPanel = new JPanel(cardLayout);
         contentPanel.setBackground(UIUtils.BG);
 
-        String[] keys    = {"INICIO", "TRANSACCIONES", "DEUDAS", "OBJETIVOS", "ESTADISTICAS"};
-        String[] labels  = {"Inicio", "Transacciones", "Deudas", "Objetivos", "Estadísticas"};
+        String[] keys   = {"INICIO", "TRANSACCIONES", "DEUDAS", "OBJETIVOS", "ESTADISTICAS", "PERFIL"};
+        String[] labels = {"Inicio", "Transacciones", "Deudas", "Objetivos", "Estadísticas", "Perfil"};
 
         contentPanel.add(createTab(
             "Inicio — Resumen del mes actual",
@@ -53,7 +53,9 @@ public class GuiaView extends JPanel {
             "    - Naranja: vence en 8 a 30 días.\n" +
             "  • Objetivos activos: metas financieras en progreso con el ahorro mensual necesario.\n\n" +
             "PANEL DERECHO\n" +
-            "  • Muestra el gasto del mes desglosado por categoría.\n\n" +
+            "  • Botón de usuario (esquina superior): despliega acceso rápido a tu perfil\n" +
+            "    y la opción de cerrar sesión.\n" +
+            "  • Gastos por categoría: desglose del gasto del mes actual por tipo.\n\n" +
             "Toda la información se actualiza automáticamente al registrar cualquier dato nuevo."
         ), "INICIO");
 
@@ -70,8 +72,9 @@ public class GuiaView extends JPanel {
             "    Comida y Supermercado, Hogar y Decoración, Educación y Formación.\n\n" +
             "TRANSFERENCIAS\n" +
             "  • Selecciona si envías o recibes dinero.\n" +
-            "  • Introduce el nombre del otro usuario tal como está registrado en la app.\n" +
-            "  • El usuario debe existir en la aplicación para que la transferencia se procese.\n" +
+            "  • Elige el destinatario o remitente desde el desplegable: muestra\n" +
+            "    automáticamente todos los usuarios registrados en la aplicación\n" +
+            "    excepto tu propia cuenta.\n" +
             "  • Añade un asunto y la cantidad.\n\n" +
             "Al registrar cualquier movimiento, el Inicio se actualiza de forma inmediata."
         ), "TRANSACCIONES");
@@ -82,15 +85,17 @@ public class GuiaView extends JPanel {
             "AL REGISTRAR UNA DEUDA debes indicar:\n" +
             "  • Descripción: concepto o acreedor de la deuda.\n" +
             "  • Monto total: importe total de la deuda.\n" +
-            "  • Monto pendiente: lo que queda por pagar.\n" +
-            "  • Fecha de vencimiento: fecha límite de pago.\n" +
-            "  • Estado: EN PROGRESO (deuda activa) o FINALIZADO (deuda saldada).\n\n" +
-            "Las deudas con estado EN PROGRESO aparecen en el panel de Inicio\n" +
-            "ordenadas por días restantes, con código de color para identificar\n" +
-            "rápidamente las más urgentes.\n\n" +
-            "El historial completo de deudas está disponible en la sección Estadísticas.\n\n" +
-            "Consejo: actualiza el monto pendiente y el estado conforme vayas\n" +
-            "pagando la deuda para mantener los datos al día."
+            "  • Monto pendiente: lo que queda por pagar en este momento.\n" +
+            "  • Fecha de vencimiento: fecha límite de pago (formato dd-MM-yyyy).\n" +
+            "  • Toda deuda se registra automáticamente como EN PROGRESO.\n\n" +
+            "EDITAR UNA DEUDA\n" +
+            "  • Selecciona una deuda de la tabla y pulsa «Editar Deuda».\n" +
+            "  • Introduce el nuevo monto pendiente.\n" +
+            "  • Si el monto pendiente llega a 0, el estado cambia a FINALIZADO\n" +
+            "    de forma automática.\n\n" +
+            "Las deudas EN PROGRESO aparecen en el panel de Inicio ordenadas\n" +
+            "por días restantes, con código de color para identificar las más urgentes.\n\n" +
+            "El historial completo está disponible en la sección Estadísticas."
         ), "DEUDAS");
 
         contentPanel.add(createTab(
@@ -101,11 +106,13 @@ public class GuiaView extends JPanel {
             "  • Costo total: cantidad de dinero que necesitas en total.\n" +
             "  • Ahorro mensual sugerido: cuánto ahorrar cada mes para alcanzarla.\n" +
             "  • Tiempo necesario: estimación del tiempo para conseguirlo.\n" +
-            "  • Estado: En progreso (activo) o Cumplido (meta alcanzada).\n\n" +
-            "Los objetivos En progreso aparecen en el panel de Inicio para\n" +
-            "tenerlos siempre visibles sin necesidad de entrar aquí.\n\n" +
-            "El historial completo de objetivos, incluyendo los Cumplidos,\n" +
-            "está disponible en la sección Estadísticas."
+            "  • Estado inicial: En progreso.\n\n" +
+            "MARCAR UN OBJETIVO COMO CUMPLIDO\n" +
+            "  • Selecciona el objetivo en la tabla y pulsa «Marcar como Cumplido».\n" +
+            "  • El estado cambia a Cumplido y deja de aparecer en el panel de Inicio.\n\n" +
+            "Los objetivos En progreso aparecen en el Inicio para tenerlos\n" +
+            "siempre visibles. El historial completo, incluidos los Cumplidos,\n" +
+            "está disponible en Estadísticas."
         ), "OBJETIVOS");
 
         contentPanel.add(createTab(
@@ -115,23 +122,41 @@ public class GuiaView extends JPanel {
             "RESUMEN\n" +
             "  • Ingresos totales: suma de todos los ingresos registrados.\n" +
             "  • Gastos totales: suma de todos los gastos acumulados.\n" +
-            "  • Beneficio Neto: diferencia entre ambos totales.\n\n" +
+            "  • Beneficio Neto: diferencia entre ingresos y gastos totales.\n\n" +
             "HISTORIAL COMPLETO\n" +
-            "  • Transferencias: todas las transferencias en las que has participado.\n" +
-            "  • Deudas: lista completa con estado actual de cada deuda.\n" +
+            "  • Transferencias: todas las operaciones de envío y recepción de dinero.\n" +
+            "  • Deudas: lista completa con monto total, pendiente, fecha y estado.\n" +
             "  • Objetivos: todas las metas con costo, ahorro mensual, tiempo estimado y estado.\n\n" +
-            "A diferencia del Inicio, que muestra solo el mes en curso, Estadísticas\n" +
+            "A diferencia del Inicio —que muestra solo el mes en curso— Estadísticas\n" +
             "acumula el historial total desde el primer uso de la aplicación.\n\n" +
             "Los datos se actualizan automáticamente al registrar cualquier movimiento."
         ), "ESTADISTICAS");
 
+        contentPanel.add(createTab(
+            "Perfil — Gestión de tu cuenta",
+            "La sección de Perfil te permite consultar y actualizar los datos de tu cuenta.\n\n" +
+            "DATOS DE LA CUENTA\n" +
+            "  • Muestra tu nombre de usuario y correo electrónico actuales.\n\n" +
+            "CAMBIAR NOMBRE\n" +
+            "  • Introduce el nuevo nombre en el campo y pulsa «Guardar nombre».\n" +
+            "  • El nombre no puede estar vacío ni superar 50 caracteres.\n" +
+            "  • El cambio se refleja de inmediato en toda la aplicación.\n\n" +
+            "CAMBIAR CONTRASEÑA\n" +
+            "  • Introduce tu contraseña actual para verificar tu identidad.\n" +
+            "  • Escribe la nueva contraseña (mínimo 6 caracteres) y confírmala.\n" +
+            "  • La nueva contraseña debe ser distinta a la actual.\n\n" +
+            "CERRAR SESIÓN\n" +
+            "  • Cierra la aplicación. También puedes cerrar sesión desde el botón\n" +
+            "    de usuario en el panel derecho de la pantalla de Inicio."
+        ), "PERFIL");
+
         // Barra de pestañas de ancho completo
-        JPanel tabBar = new JPanel(new GridLayout(1, 5, 0, 0));
+        JPanel tabBar = new JPanel(new GridLayout(1, 6, 0, 0));
         tabBar.setBackground(UIUtils.BG_CARD);
         tabBar.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, UIUtils.BORDER));
 
-        JButton[] tabBtns = new JButton[5];
-        for (int i = 0; i < 5; i++) {
+        JButton[] tabBtns = new JButton[6];
+        for (int i = 0; i < 6; i++) {
             tabBtns[i] = crearTabBoton(labels[i]);
             final int idx = i;
             tabBtns[i].addActionListener(e -> {
