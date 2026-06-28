@@ -7,9 +7,12 @@ import java.util.Map;
 import com.dam.finanzas.model.bbdd.TablaIngresos;
 import com.dam.finanzas.model.bbdd.TablaGastos;
 import com.dam.finanzas.model.bbdd.TablaTransferencia;
+import com.dam.finanzas.model.bbdd.TablaUsuario;
 import com.dam.finanzas.model.Ingreso;
 import com.dam.finanzas.model.Gasto;
 import com.dam.finanzas.model.Transferencia;
+import com.dam.finanzas.model.Usuario;
+import java.util.List;
 
 public class TransaccionesView extends JPanel {
     private int idUsuarioActual;
@@ -238,9 +241,11 @@ public class TransaccionesView extends JPanel {
             "Educación y Formación"
         };
         JComboBox<String> categoriaComboBox = new JComboBox<>(categorias);
+        UIUtils.estilizarComboBox(categoriaComboBox);
+        categoriaComboBox.setRenderer(UIUtils.rendererComboBox());
         gbcField.gridx = 1;
         gbcField.gridy = 2;
-        panel.add(categoriaComboBox, gbcField);
+        panel.add(UIUtils.wrapComboBox(categoriaComboBox), gbcField);
 
         GridBagConstraints gbcButton = new GridBagConstraints();
         gbcButton.gridx = 0;
@@ -305,18 +310,36 @@ public class TransaccionesView extends JPanel {
 
         String[] opciones = {"Enviar Dinero", "Recibir Dinero"};
         JComboBox<String> tipoTransferenciaComboBox = new JComboBox<>(opciones);
+        UIUtils.estilizarComboBox(tipoTransferenciaComboBox);
+        tipoTransferenciaComboBox.setRenderer(UIUtils.rendererComboBox());
         gbcField.gridx = 1;
         gbcField.gridy = 0;
-        panel.add(tipoTransferenciaComboBox, gbcField);
+        panel.add(UIUtils.wrapComboBox(tipoTransferenciaComboBox), gbcField);
 
         gbcLabel.gridx = 0;
         gbcLabel.gridy = 1;
         panel.add(new JLabel("Destinatario/Remitente:"), gbcLabel);
 
-        JTextField destinatarioField = new JTextField(20);
+        List<Usuario> usuarios = new TablaUsuario().obtenerTodosUsuariosExcepto(idUsuarioActual);
+        JComboBox<Usuario> destinatarioComboBox = new JComboBox<>();
+        for (Usuario u : usuarios) destinatarioComboBox.addItem(u);
+        UIUtils.estilizarComboBox(destinatarioComboBox);
+        destinatarioComboBox.setRenderer(new javax.swing.DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(javax.swing.JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 13));
+                setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+                setBackground(isSelected ? UIUtils.BG_ACCENT : UIUtils.BG_CARD);
+                setForeground(isSelected ? UIUtils.ACCENT : UIUtils.TEXT);
+                if (value instanceof Usuario u) setText(u.getNombre());
+                return this;
+            }
+        });
         gbcField.gridx = 1;
         gbcField.gridy = 1;
-        panel.add(destinatarioField, gbcField);
+        panel.add(UIUtils.wrapComboBox(destinatarioComboBox), gbcField);
 
         gbcLabel.gridx = 0;
         gbcLabel.gridy = 2;
@@ -344,37 +367,34 @@ public class TransaccionesView extends JPanel {
         gbcButton.insets = new Insets(25, 15, 15, 15);
         JButton registrarButton = UIUtils.crearBoton("Registrar Transferencia", UIUtils.ACCENT, Color.WHITE);
         registrarButton.addActionListener(e -> {
-            String nombreOtroUsuario = destinatarioField.getText().trim();
+            Usuario usuarioSeleccionado = (Usuario) destinatarioComboBox.getSelectedItem();
+            if (usuarioSeleccionado == null) {
+                JOptionPane.showMessageDialog(null, "No hay usuarios disponibles", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             String asunto = asuntoField.getText();
             try {
                 double cantidad = Double.parseDouble(cantidadField.getText());
 
                 if (cantidad > 0) {
-                    TablaTransferencia tablaTransferencia = new TablaTransferencia();
-                    int idOtroUsuario = tablaTransferencia.obtenerIdPorNombre(nombreOtroUsuario);
-
-                    if (idOtroUsuario == -1) {
-                        JOptionPane.showMessageDialog(null, "Usuario '" + nombreOtroUsuario + "' no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
+                    int idOtroUsuario = usuarioSeleccionado.getIdUsuario();
+                    String nombreOtroUsuario = usuarioSeleccionado.getNombre();
                     String opcion = (String) tipoTransferenciaComboBox.getSelectedItem();
                     Transferencia transferencia;
                     String mensaje;
 
                     if ("Enviar Dinero".equals(opcion)) {
                         transferencia = new Transferencia(idUsuarioActual, idOtroUsuario, cantidad, asunto);
-                        mensaje = "Dinero enviado: " + cantidad + "€ a " + nombreOtroUsuario + " por " + asunto;
+                        mensaje = "Dinero enviado: " + cantidad + "€ a " + nombreOtroUsuario;
                     } else {
                         transferencia = new Transferencia(idOtroUsuario, idUsuarioActual, cantidad, asunto);
-                        mensaje = "Dinero recibido: " + cantidad + "€ de " + nombreOtroUsuario + " por " + asunto;
+                        mensaje = "Dinero recibido: " + cantidad + "€ de " + nombreOtroUsuario;
                     }
 
-                    int resultado = tablaTransferencia.registrarTransferencia(transferencia);
+                    int resultado = new TablaTransferencia().registrarTransferencia(transferencia);
 
                     if (resultado > 0) {
                         JOptionPane.showMessageDialog(null, mensaje, "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                        destinatarioField.setText("");
                         asuntoField.setText("");
                         cantidadField.setText("");
                         mainView.actualizarTotales();

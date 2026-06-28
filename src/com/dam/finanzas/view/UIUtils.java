@@ -77,6 +77,47 @@ public class UIUtils {
         }
     }
 
+    /** Aplica estilo base a un JComboBox (fondo, fuente, color de texto). */
+    public static void estilizarComboBox(JComboBox<?> combo) {
+        combo.setBackground(BG_CARD);
+        combo.setForeground(TEXT);
+        combo.setFont(new Font("Arial", Font.PLAIN, 13));
+        combo.setFocusable(false);
+    }
+
+    /**
+     * Renderer para los items del desplegable de cualquier JComboBox.
+     * El texto se toma de value.toString(). Para tipos personalizados,
+     * llama a super y luego sobreescribe setText().
+     */
+    public static DefaultListCellRenderer rendererComboBox() {
+        return new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                setFont(new Font("Arial", Font.PLAIN, 13));
+                setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+                setBackground(isSelected ? BG_ACCENT : BG_CARD);
+                setForeground(isSelected ? ACCENT : TEXT);
+                return this;
+            }
+        };
+    }
+
+    /**
+     * Envuelve un JComboBox en un JPanel con borde UIUtils.BORDER.
+     * Añade el resultado al layout; el combo sigue siendo la referencia funcional.
+     */
+    public static JPanel wrapComboBox(JComboBox<?> combo) {
+        combo.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.setBackground(BG_CARD);
+        wrapper.setBorder(BorderFactory.createLineBorder(BORDER));
+        wrapper.add(combo, BorderLayout.CENTER);
+        return wrapper;
+    }
+
     /** Aplica estilos de color modernos a una JTable. */
     public static void estilizarTabla(JTable table) {
         table.setBackground(BG_CARD);

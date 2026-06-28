@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.dam.finanzas.model.Usuario;
 
@@ -196,6 +198,43 @@ public class TablaUsuario {
                 e.printStackTrace();
             }
         }
+    }
+
+    public List<Usuario> obtenerTodosUsuariosExcepto(int idExcluido) {
+        List<Usuario> usuarios = new ArrayList<>();
+        String query = "SELECT " + NOM_COL_ID_USER + ", " + NOM_COL_NOM
+                + " FROM " + NOM_TABLA_USER + " WHERE " + NOM_COL_ID_USER + " != ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = conBBDD.getConexion();
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, idExcluido);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                usuarios.add(new Usuario(
+                    rs.getInt(NOM_COL_ID_USER),
+                    rs.getString(NOM_COL_NOM),
+                    "", ""
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (con != null) con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return usuarios;
     }
 
     public Usuario obtenerUsuarioPorCorreo(String correo) {

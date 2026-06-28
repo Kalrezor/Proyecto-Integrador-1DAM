@@ -39,26 +39,21 @@ public class PerfilView extends JPanel {
         headerPanel.add(subtitleLabel, BorderLayout.CENTER);
         add(headerPanel, BorderLayout.NORTH);
 
-        JPanel contentPanel = new JPanel();
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        JPanel contentPanel = new JPanel(new BorderLayout(0, 10));
         contentPanel.setBackground(UIUtils.BG);
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 60, 20, 60));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 12, 20));
 
-        contentPanel.add(createInfoCard());
-        contentPanel.add(Box.createVerticalStrut(15));
-        contentPanel.add(createCambiarNombreCard());
-        contentPanel.add(Box.createVerticalStrut(15));
-        contentPanel.add(createCambiarContrasenaCard());
-        contentPanel.add(Box.createVerticalStrut(20));
-        contentPanel.add(createSalirCard());
-        contentPanel.add(Box.createVerticalStrut(20));
+        contentPanel.add(createInfoCard(), BorderLayout.NORTH);
 
-        JScrollPane scroll = new JScrollPane(contentPanel);
-        scroll.setBorder(null);
-        scroll.getVerticalScrollBar().setUnitIncrement(16);
-        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        add(scroll, BorderLayout.CENTER);
+        JPanel formsPanel = new JPanel(new GridLayout(1, 2, 12, 0));
+        formsPanel.setBackground(UIUtils.BG);
+        formsPanel.add(createCambiarNombreCard());
+        formsPanel.add(createCambiarContrasenaCard());
+        contentPanel.add(formsPanel, BorderLayout.CENTER);
+
+        contentPanel.add(createSalirCard(), BorderLayout.SOUTH);
+
+        add(contentPanel, BorderLayout.CENTER);
     }
 
     private JPanel createInfoCard() {
@@ -66,9 +61,8 @@ public class PerfilView extends JPanel {
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(UIUtils.BORDER),
-            BorderFactory.createEmptyBorder(20, 25, 20, 25)
+            BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
 
         TablaUsuario tablaUsuario = new TablaUsuario();
         Usuario usuario = tablaUsuario.obtenerUsuarioPorId(idUsuarioActual);
@@ -94,7 +88,7 @@ public class PerfilView extends JPanel {
                 g2.dispose();
             }
         };
-        avatarPanel.setPreferredSize(new Dimension(62, 62));
+        avatarPanel.setPreferredSize(new Dimension(50, 50));
         avatarPanel.setOpaque(false);
         card.add(avatarPanel, BorderLayout.WEST);
 
@@ -123,18 +117,17 @@ public class PerfilView extends JPanel {
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createTitledBorder(BorderFactory.createLineBorder(UIUtils.BORDER), "Cambiar nombre"),
-            BorderFactory.createEmptyBorder(8, 15, 12, 15)
+            BorderFactory.createEmptyBorder(4, 10, 8, 10)
         ));
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 160));
 
         GridBagConstraints gbcL = new GridBagConstraints();
         gbcL.anchor = GridBagConstraints.WEST;
-        gbcL.insets = new Insets(6, 5, 6, 12);
+        gbcL.insets = new Insets(4, 5, 4, 10);
 
         GridBagConstraints gbcF = new GridBagConstraints();
         gbcF.fill = GridBagConstraints.HORIZONTAL;
         gbcF.weightx = 1.0;
-        gbcF.insets = new Insets(6, 0, 6, 5);
+        gbcF.insets = new Insets(4, 0, 4, 5);
 
         gbcL.gridx = 0; gbcL.gridy = 0;
         card.add(new JLabel("Nuevo nombre:"), gbcL);
@@ -194,18 +187,17 @@ public class PerfilView extends JPanel {
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createTitledBorder(BorderFactory.createLineBorder(UIUtils.BORDER), "Cambiar contraseña"),
-            BorderFactory.createEmptyBorder(8, 15, 12, 15)
+            BorderFactory.createEmptyBorder(4, 10, 8, 10)
         ));
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
 
         GridBagConstraints gbcL = new GridBagConstraints();
         gbcL.anchor = GridBagConstraints.WEST;
-        gbcL.insets = new Insets(6, 5, 6, 12);
+        gbcL.insets = new Insets(4, 5, 4, 10);
 
         GridBagConstraints gbcF = new GridBagConstraints();
         gbcF.fill = GridBagConstraints.HORIZONTAL;
         gbcF.weightx = 1.0;
-        gbcF.insets = new Insets(6, 0, 6, 5);
+        gbcF.insets = new Insets(4, 0, 4, 5);
 
         gbcL.gridx = 0; gbcL.gridy = 0;
         card.add(new JLabel("Contraseña actual:"), gbcL);
@@ -283,9 +275,8 @@ public class PerfilView extends JPanel {
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(UIUtils.BORDER),
-            BorderFactory.createEmptyBorder(15, 25, 15, 25)
+            BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
 
         JButton btnSalir = UIUtils.crearBoton("Cerrar sesión", UIUtils.DANGER, Color.WHITE);
         btnSalir.addActionListener(e -> System.exit(0));
